@@ -49,8 +49,10 @@
     var isUpdateProfile = true;
 
     function showProfileData(){
-        document.querySelector(".cover-photo").setAttribute("src", mainURL + "/" + window.user.coverPhoto);
-        document.querySelector(".profile-image").setAttribute("src", mainURL + "/" + window.user.profileImage);
+        //document.querySelector(".cover-photo").setAttribute("src", mainURL + "/" + window.user.coverPhoto);
+        //document.querySelector(".profile-image").setAttribute("src", mainURL + "/" + window.user.profileImage);
+        document.querySelector(".cover-photo").setAttribute("src", "gs://thelighthouseshines-b975b.appspot.com" + "/" + window.user.coverPhoto);
+        document.querySelector(".profile-image").setAttribute("src", "gs://thelighthouseshines-b975b.appspot.com" + "/" + window.user.profileImage);
 
         document.querySelector(".user-name").innerHTML = window.user.name;
         document.querySelector(".name").value = window.user.name;
