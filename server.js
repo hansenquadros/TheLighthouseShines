@@ -31,7 +31,7 @@ socketIO.on("Connection", function (socket) {
     socketID = socket.id;
 });
 
-http.listen(3000, function() {
+http.listen(5000, function() {
     console.log("Server Started");
     
     mongoClient.connect("mongodb+srv://hansenquadros:hansenquadros@projectdbcluster.ywsoa.mongodb.net/lighthouse_db?retryWrites=true&w=majority", function(error,client){
