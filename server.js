@@ -24,7 +24,7 @@ var socketIO = require("socket.io")(http);
 var socketID = "";
 var users = [];
 
-var mainURL = "http://localhost:3000";
+var mainURL = "https://thelighthouseshines.herokuapp.com/";
 
 socketIO.on("Connection", function (socket) {
     console.log("User Connected: ", socket.id);
