@@ -24,7 +24,8 @@
 						html += '<div class="your-page">';
 							html += '<figure>';
 								html += '<a href="/page/' + data._id + '">';
-									html += '<img src="' + mainURL + '/' + data.coverPhoto + '">';
+									//html += '<img src="' + mainURL + '/' + data.coverPhoto + '">';
+									html += '<img src="' + data.coverPhoto + '">';
 								html += '</a>';
 							html += '</figure>';
 
@@ -46,7 +47,8 @@
 											for(var b=0;b < data.likers.length; b++){
 												var liker = data.likers[b];
 												html += '<a data-toggle="tooltip">';
-													html += '<img src="' + mainURL + '/' + liker.profileImage + '" style="width: 32px; height: 32px; object-fit: cover;">';
+													//html += '<img src="' + mainURL + '/' + liker.profileImage + '" style="width: 32px; height: 32px; object-fit: cover;">';
+													html += '<img src="' + liker.profileImage + '" style="width: 32px; height: 32px; object-fit: cover;">';
 												html += '</a>';
 											}
 										html += '</div>';

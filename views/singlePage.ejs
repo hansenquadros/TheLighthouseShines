@@ -76,7 +76,8 @@
                     document.getElementById("btn-toggle-like").innerHTML = "Like";
                 }
 
-                document.getElementById("page-cover-photo").setAttribute("src", mainURL + "/" + response.data.coverPhoto);
+                //document.getElementById("page-cover-photo").setAttribute("src", mainURL + "/" + response.data.coverPhoto);
+                document.getElementById("page-cover-photo").setAttribute("src", response.data.coverPhoto);
                 document.getElementById("page-likes").innerHTML = response.data.likers.length + "likes";
                 document.getElementById("page-name").innerHTML = response.data.name;
 
@@ -94,7 +95,8 @@
 							html += '<div class="friend-info">';
 
 								html += '<figure>';
-									html += '<img src="' + mainURL + "/" + data.user.profileImage + '">';
+                                    //html += '<img src="' + mainURL + "/" + data.user.profileImage + '">';
+                                    html += '<img src="' + data.user.profileImage + '">';
 								html += '</figure>';
 
 								html += '<div class="friend-name">';
@@ -118,11 +120,13 @@
 									html += '</div>';
 
 									if (data.image != "") {
-										html += '<img src="' + mainURL + "/" + data.image + '">';
+                                        //html += '<img src="' + mainURL + "/" + data.image + '">';
+                                        html += '<img src="' + data.image + '">';
 									}
 
 									if (data.video != "") {
-										html += '<video style="height: 359px; width: 100%;" controls src="' + mainURL + "/" + data.video + '"></video>';
+                                        //html += '<video style="height: 359px; width: 100%;" controls src="' + mainURL + "/" + data.video + '"></video>';
+                                        html += '<video style="height: 359px; width: 100%;" controls src="' + data.video + '"></video>';
 									}
 
 									html += createLikesSection(data);

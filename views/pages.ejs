@@ -49,8 +49,9 @@
 					html += '<li>';
 						html += '<div class="f-page">';
 							html += '<figure>';
-								html += '<a href="/page/>' + data._id + '">';
-									html += '<img src="' + mainURL + '/' + data.coverPhoto + '" style="width: 205px; height: 182px; object-fit: cover;">';
+								html += '<a href="/page/' + data._id + '">';
+									//html += '<img src="' + mainURL + '/' + data.coverPhoto + '" style="width: 205px; height: 182px; object-fit: cover;">';
+									html += '<img src="' + data.coverPhoto + '" style="width: 205px; height: 182px; object-fit: cover;">';
 								html += '</a>';
 								html += '<em>' + data.likers.length + ' likes</em>';
 							html += '</figure>';

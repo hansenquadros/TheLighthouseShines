@@ -3,7 +3,7 @@
 <section>
     <div class="feature-photo">
         <figure>
-            <img class="cover-photo" id="cover-photo" style="width: 100%; height: 700px; object-fit: cover;">
+            <img class="cover-photo" src="/public/img/cover-pic.png" id="cover-photo" style="width: 100%; height: 700px; object-fit: cover;">
         </figure>
 
         <form class="edit-phto" id="form-cover-photo" onsubmit="return false;">
@@ -19,7 +19,7 @@
                 <div class="col-md-2">
                     <div class="user-avatar">
                         <figure>
-                            <img class="profile-image" id="profile-image" style="width: 100%; height: 150px; object-fit: cover;">
+                            <img class="profile-image" src="/public/img/profile-pic.jpg" id="profile-image" style="width: 100%; height: 150px; object-fit: cover;">
 
                             <form class="edit-phto" id="form-upload-image" onsubmit="return false;">
                                 <i class="fa fa-camera-retro"></i>
@@ -49,10 +49,11 @@
     var isUpdateProfile = true;
 
     function showProfileData(){
+
         //document.querySelector(".cover-photo").setAttribute("src", mainURL + "/" + window.user.coverPhoto);
         //document.querySelector(".profile-image").setAttribute("src", mainURL + "/" + window.user.profileImage);
-        document.querySelector(".cover-photo").setAttribute("src", "gs://thelighthouseshines-b975b.appspot.com" + "/" + window.user.coverPhoto);
-        document.querySelector(".profile-image").setAttribute("src", "gs://thelighthouseshines-b975b.appspot.com" + "/" + window.user.profileImage);
+        document.querySelector(".cover-photo").setAttribute("src", window.user.coverPhoto);
+        document.querySelector(".profile-image").setAttribute("src", window.user.profileImage);
 
         document.querySelector(".user-name").innerHTML = window.user.name;
         document.querySelector(".name").value = window.user.name;

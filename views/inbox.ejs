@@ -71,7 +71,8 @@
 		html += '<li data-id="' + data._id + '" onclick="friendSelected(this);">';
 
 			html += '<figure>';
-				html+='<img src="'+ mainURL + '/' + data.profileImage + '">';
+				//html+='<img src="'+ mainURL + '/' + data.profileImage + '">';
+				html+='<img src="'+ data.profileImage + '">';
 			html += '</figure>';
 
 			html += '<div class="people-name">';
@@ -95,7 +96,8 @@ function friendSelected(self){
 
 	var html = "";
 	html += '<figure>';
-		html += '<img src="'+ mainURL + '/' + selectedFriend.profileImage + '">';
+		//html += '<img src="'+ mainURL + '/' + selectedFriend.profileImage + '">';
+		html += '<img src="'+ selectedFriend.profileImage + '">';
 	html += '</figure>';
 	html += '<span>' + selectedFriend.name + '</span>';
 	document.getElementById("conversation-head").innerHTML = html;
@@ -199,5 +201,5 @@ function connectSocket(){
 	ajax.send(formData);
 }
 </script>
-<script src="https://thelighthouseshines.herokuapp.com//socket.io/socket.io.js"></script>
+<script src="http://localhost:3000/socket.io/socket.io.js"></script>
 <%- include ("includes/footer") %>

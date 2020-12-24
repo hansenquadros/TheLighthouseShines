@@ -1,9 +1,3 @@
-<iframe
-    allow="microphone;"
-    width="350"
-    height="430"
-    src="https://console.dialogflow.com/api-client/demo/embedded/45a61698-9edb-42cb-8848-fca403b15e49">
-</iframe>
 <%- include ("includes/header") %>
       
 <section>
@@ -24,10 +18,6 @@
 							<div class="loadMore" id="newsfeed">
 
 							</div>
-						</div>
-
-						<div class="col-md-3">
-							<%- include ("includes/right-sidebar") %>
 						</div>
 
 						<div class="col-md-3">
@@ -92,7 +82,8 @@
 							html += '<div class="friend-info">';
 
 								html += '<figure>';
-									html += '<img src="' + mainURL + "/" + data.user.profileImage + '" style="width: 45px; height: 45px; object-fit: cover;">';
+									//html += '<img src="' + mainURL + "/" + data.user.profileImage + '" style="width: 45px; height: 45px; object-fit: cover;">';
+									html += '<img src="' + data.user.profileImage + '" style="width: 45px; height: 45px; object-fit: cover;">';
 								html += '</figure>';
 
 								html += '<div class="friend-name">';
@@ -125,11 +116,13 @@
 									html += '</div>';
 
 									if (data.image != "") {
-										html += '<img src="' + mainURL + "/" + data.image + '">';
+										//html += '<img src="' + mainURL + "/" + data.image + '">';
+										html += '<img src="' + data.image + '">';
 									}
 
 									if (data.video != "") {
-										html += '<video style="height: 359px; width: 100%;" controls src="' + mainURL + "/" + data.video + '"></video>';
+										//html += '<video style="height: 359px; width: 100%;" controls src="' + mainURL + "/" + data.video + '"></video>';
+										html += '<video style="height: 359px; width: 100%;" controls src="' + data.video + '"></video>';
 									}
 
 									html += createLikesSection(data);

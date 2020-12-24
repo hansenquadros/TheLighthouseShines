@@ -12,9 +12,15 @@ var http = require("http").createServer(app);
 var bcrypt = require("bcrypt");
 var fileSystem = require("fs");
 
+var cloudinary = require('cloudinary').v2;
+cloudinary.config({ 
+    cloud_name: 'thelighthouseshines', 
+    api_key: '487153282333662', 
+    api_secret: 'qdN3ZcG20XegDtAhr1uf_lhfI-I' 
+  });
+var CLOUDINARY_URL="cloudinary://487153282333662:qdN3ZcG20XegDtAhr1uf_lhfI-I@thelighthouseshines";
+
 var jwt = require("jsonwebtoken");
-const { request } = require("http");
-const { response } = require("express");
 var accessTokenSecret = "myAccessTokenSecret";
 
 app.use("/public", express.static(__dirname + "/public"));
@@ -24,24 +30,24 @@ var socketIO = require("socket.io")(http);
 var socketID = "";
 var users = [];
 
-var mainURL = "gs://thelighthouseshines-b975b.appspot.com/";
+var mainURL = "http://localhost:3000";
 
-socketIO.on("Connection", function (socket) {
+socketIO.on("connection", function (socket) {
     console.log("User Connected: ", socket.id);
     socketID = socket.id;
 });
-http.listen(process.env.PORT || 5000, function() {
+http.listen(process.env.PORT || 3000, function() {
     console.log("Server Started");
     
     mongoClient.connect("mongodb+srv://hansenquadros:hansenquadros@projectdbcluster.ywsoa.mongodb.net/lighthouse_db?retryWrites=true&w=majority", function(error,client){
         var database = client.db("lighthouse_db");
         console.log("Database Connected");
 
-        app.get("/signup", function(request,response){
-            response.render("signup");
+        app.get("/signup", function(request,result){
+            result.render("signup");
         });
 
-        app.post("/signup", function(request,response){
+        app.post("/signup", function(request,result){
             var name = request.fields.name;
             var username = request.fields.username;
             var email = request.fields.email;
@@ -63,8 +69,8 @@ http.listen(process.env.PORT || 5000, function() {
                             "email": email,
                             "password": hash,
                             "gender": gender,
-                            "profileImage": "",
-                            "CoverPhoto": "",
+                            "profileImage": "https://res.cloudinary.com/thelighthouseshines/image/upload/v1608796666/profile-pic_g0novg.jpg",
+                            "CoverPhoto": "https://res.cloudinary.com/thelighthouseshines/image/upload/v1608796714/cover-pic_epskjb.png",
                             "dob": "",
                             "city": "",
                             "country": "",
@@ -75,14 +81,14 @@ http.listen(process.env.PORT || 5000, function() {
                             "groups": [],
                             "posts": [],
                         }, function(error,data){
-                            response.json({
+                            result.json({
                                 "status": "success",
                                 "message": "Signed up successfully. You can login now."
                             });
                         });
                     });
                 } else {
-                    response.json({
+                    result.json({
                         "status": "error",
                         "message": "Email or username already exit."
                     });
@@ -90,18 +96,18 @@ http.listen(process.env.PORT || 5000, function() {
             });
         });
         
-        app.get("/login", function(request,response){
-            response.render("login");
+        app.get("/login", function(request,result){
+            result.render("login");
         });
 
-        app.post("/login", function(request,response){
+        app.post("/login", function(request,result){
             var email = request.fields.email;
             var password = request.fields.password;
             database.collection("users").findOne({
                 "email": email
             }, function(error,user){
                 if(user == null){
-                    response.json({
+                    result.json({
                         "status": "error",
                         "message": "Email does not exist"
                     });
@@ -116,7 +122,7 @@ http.listen(process.env.PORT || 5000, function() {
                                     "accessToken": accessToken
                                 }
                             }, function(error,data){
-                                response.json({
+                                result.json({
                                     "status": "success",
                                     "message": "Login successfully",
                                     "accessToken": accessToken,
@@ -124,7 +130,7 @@ http.listen(process.env.PORT || 5000, function() {
                                  });
                              });
                         } else {
-                            response.json({
+                            result.json({
                                 "status": "error",
                                 "message": "Password is incorrect"
                             });
@@ -134,22 +140,22 @@ http.listen(process.env.PORT || 5000, function() {
             });
         });
 
-        app.get("/updateProfile", function(request,response){
-            response.render("updateProfile");
+        app.get("/updateProfile", function(request,result){
+            result.render("updateProfile");
         });
 
-        app.post("/getUser",function(request,response){
+        app.post("/getUser",function(request,result){
             var accessToken = request.fields.accessToken;
             database.collection("users").findOne({
                 "accessToken": accessToken
             }, function(error,user){
                 if(user == null){
-                    response.json({
+                    result.json({
                         "status": "error",
                         "message": "User has been logged out. Please login again."
                     });
                 } else {
-                    response.json({
+                    result.json({
                         "status": "success",
                         "message": "Record has been fetched.",
                         "data": user
@@ -158,11 +164,11 @@ http.listen(process.env.PORT || 5000, function() {
             });
         });
 
-        app.get("/logout", function(request,response){
-            response.redirect("/login");
+        app.get("/logout", function(request,result){
+            result.redirect("/login");
         });
 
-        app.post("/uploadCoverPhoto", function(request,response){
+        app.post("/uploadCoverPhoto", function(request,result){
             var accessToken = request.fields.accessToken;
             var coverPhoto = "";
 
@@ -170,38 +176,57 @@ http.listen(process.env.PORT || 5000, function() {
                 "accessToken": accessToken
             }, function(error,user){
                 if(user == null){
-                    response.json({
+                    result.json({
                         "status": "error",
                         "message": "User has been logged out. Please login again."    
                     });
                 } else {
                     if(request.files.coverPhoto.size >0 && request.files.coverPhoto.type.includes("image")){
-                        if(user.coverPhoto != ""){
-                            fileSystem.unlink(user.CoverPhoto, function(error){
-                                //
-                            });
-                        }
+                        // if(user.coverPhoto != ""){
+                        //     fileSystem.unlink(user.CoverPhoto, function(error){
+                        //         //
+                        //     });
+                        // }
 
-                        coverPhoto = "public/images/" + new Date().getTime() + "-" + request.files.coverPhoto.name;
-                        fileSystem.rename(request.files.coverPhoto.path, coverPhoto, function(error){
-                            //
-                        });
-
-                        database.collection("users").updateOne({
-                            "accessToken": accessToken
-                        },{
-                            $set: {
-                                "coverPhoto": coverPhoto
-                            }
-                        },function(error,data){
-                            response.json({
-                                "status": "status",
-                                "message": "Cover photo has been updated.",
-                                data: mainURL + "/" + coverPhoto
+                        // coverPhoto = "public/images/" + new Date().getTime() + "-" + request.files.coverPhoto.name;
+                        // fileSystem.rename(request.files.coverPhoto.path, coverPhoto, function(error){
+                        //     //
+                        // });
+                        // if(user.coverPhoto != ""){
+                        // cloudinary.v2.uploader.destroy(user.coverPhoto, function(error,result) {
+                        //     console.log(result, error) });
+                        // }
+                        coverPhoto = request.files.coverPhoto.path;
+                        cloudinary.uploader.upload(coverPhoto, function(error, response) {
+                            database.collection("users").updateOne({
+                                "accessToken": accessToken
+                            },{
+                                $set: {
+                                    "coverPhoto": response.url
+                                }
+                            },function(error,data){
+                                result.json({
+                                    "status": "status",
+                                    "message": "Cover photo has been updated.",
+                                    data: response.url
+                                });
                             });
                         });
+                        // database.collection("users").updateOne({
+                        //     "accessToken": accessToken
+                        // },{
+                        //     $set: {
+                        //         "coverPhoto": coverPhoto
+                        //     }
+                        // },function(error,data){
+                        //     result.json({
+                        //         "status": "status",
+                        //         "message": "Cover photo has been updated.",
+                        //         data: mainURL + "/" + coverPhoto
+                        //     });
+                        // });
                     } else {
-                        response.json({
+                        result.json({
                             "status": "error",
                             "message": "Please select a valid image."
                         });
@@ -210,7 +235,7 @@ http.listen(process.env.PORT || 5000, function() {
             });
         });
 
-        app.post("/uploadProfileImage", function(request,response){
+        app.post("/uploadProfileImage", function(request,result){
             var accessToken = request.fields.accessToken;
             var profileImage = "";
 
@@ -218,38 +243,54 @@ http.listen(process.env.PORT || 5000, function() {
                 "accessToken": accessToken
             }, function(error,user){
                 if(user == null){
-                    response.json({
+                    result.json({
                         "status": "error",
                         "message": "User has been logged out. Please login again."    
                     });
                 } else {
                     if(request.files.profileImage.size >0 && request.files.profileImage.type.includes("image")){
-                        if(user.profileImage != ""){
-                            fileSystem.unlink(user.profileImage, function(error){
-                                //
-                            });
-                        }
+                        // if(user.profileImage != ""){
+                        //     fileSystem.unlink(user.profileImage, function(error){
+                        //         //
+                        //     });
+                        // }
 
-                        profileImage = "public/images/" + new Date().getTime() + "-" + request.files.profileImage.name;
-                        fileSystem.rename(request.files.profileImage.path, profileImage, function(error){
-                            //
-                        });
+                        // profileImage = "public/images/" + new Date().getTime() + "-" + request.files.profileImage.name;
+                        // fileSystem.rename(request.files.profileImage.path, profileImage, function(error){
+                        //     //
+                        // });
 
-                        database.collection("users").updateOne({
-                            "accessToken": accessToken
-                        },{
-                            $set: {
-                                "profileImage": profileImage
-                            }
-                        },function(error,data){
-                            response.json({
-                                "status": "status",
-                                "message": "Profile image has been updated.",
-                                data: mainURL + "/" + profileImage
+                        // database.collection("users").updateOne({
+                        //     "accessToken": accessToken
+                        // },{
+                        //     $set: {
+                        //         "profileImage": profileImage
+                        //     }
+                        // },function(error,data){
+                        //     result.json({
+                        //         "status": "status",
+                        //         "message": "Profile image has been updated.",
+                        //         data: mainURL + "/" + profileImage
+                        //     });
+                        // });
+                        profileImage = request.files.profileImage.path;
+                        cloudinary.uploader.upload(profileImage, function(error, response) {
+                            database.collection("users").updateOne({
+                                "accessToken": accessToken
+                            },{
+                                $set: {
+                                    "profileImage": response.url
+                                }
+                            },function(error,data){
+                                result.json({
+                                    "status": "status",
+                                    "message": "Profile photo has been updated.",
+                                    data: response.url
+                                });
                             });
                         });
                     } else {
-                        response.json({
+                        result.json({
                             "status": "error",
                             "message": "Please select a valid image."
                         });
@@ -258,7 +299,7 @@ http.listen(process.env.PORT || 5000, function() {
             });
         });
 
-        app.post("/updateProfile", function(request,response){
+        app.post("/updateProfile", function(request,result){
             var accessToken = request.fields.accessToken;
             var name = request.fields.name;
             var dob = request.fields.dob;
@@ -270,7 +311,7 @@ http.listen(process.env.PORT || 5000, function() {
                 "accessToken": accessToken
             }, function(error,user){
                 if(user == null){
-                    response.json({
+                    result.json({
                         "status": "error",
                         "message": "User has been logged out. Please login again."
                     });
@@ -286,7 +327,7 @@ http.listen(process.env.PORT || 5000, function() {
                             "aboutMe": aboutMe
                         }
                     }, function(error,data){
-                        response.json({
+                        result.json({
                             "status": "status",
                             "message": "Profile has been updated."
                         });
@@ -295,11 +336,11 @@ http.listen(process.env.PORT || 5000, function() {
             });
         });
 
-        app.get("/",function(request,response){
-            response.render("index");
+        app.get("/",function(request,result){
+            result.render("index");
         });
 
-        app.post("/addPost", function(request,response){
+        app.post("/addPost", function(request,result){
 
             var accessToken = request.fields.accessToken;
             var caption = request.fields.caption;
@@ -313,7 +354,7 @@ http.listen(process.env.PORT || 5000, function() {
                 "accessToken": accessToken
             }, function(error,user){
                 if(user == null){
-                    response.json({
+                    result.json({
                         "status": "error",
                         "message": "User has been logged out. Please login again."
                     });
@@ -321,6 +362,13 @@ http.listen(process.env.PORT || 5000, function() {
                     if(request.files.image.size > 0 && request.files.image.type.includes("image")){
                         image = "public/images/" + new Date().getTime() + "-" + request.files.image.name;
                         fileSystem.rename(request.files.image.path, image, function(error){
+                            //
+                        });
+                    }
+
+                    if(request.files.video.size > 0 && request.files.video.type.includes("video")){
+                        video = "public/videos/" + new Date().getTime() + "-" + request.files.video.name;
+                        fileSystem.rename(request.files.video.path, video, function(error){
                             //
                         });
                     }
@@ -359,7 +407,64 @@ http.listen(process.env.PORT || 5000, function() {
                                         "profileImage": page.coverPhoto
                                     }
                                 }, function(error,data){
-                                        response.json({
+                                    result.json({
+                                            "status": "success",
+                                            "message": "Post has been uploaded."
+                                    });
+                                });
+                            }
+                        });
+                    } else
+
+                    if(type == "group_post"){
+                        database.collection("groups").findOne({
+                            "_id": ObjectId(_id)
+                        }, function (error, group) {
+                            if (group == null) {
+                                result.json({
+                                    "status": "error",
+                                    "message": "Group does not exist."
+                                });
+                                return;
+                            } else {
+                                var isMember = false;
+                                for(var a=0;a<group.members.length;a++){
+                                    var member = group.members[a];
+
+                                    if(member._id.toString()==user._id.toString()){
+                                        isMember=true;
+                                        break;
+                                    }
+                                }
+                                if(!isMember){
+                                    result.json({
+                                        "status": "error",
+                                        "message": "Sorry, you are not a member of this group."
+                                    });
+                                    return;
+                                }
+
+                                database.collection("posts").insertOne({
+                                    "caption": caption,
+                                    "image": image,
+                                    "video": video,
+                                    "type": type,
+                                    "createdAt": createdAt,
+                                    "likers": [],
+                                    "comments": [],
+                                    "shares": [],
+                                    "user": {
+                                        "_id": group._id,
+                                        "name": group.name,
+                                        "profileImage": group.coverPhoto
+                                    },
+                                    "uploader": {
+                                        "_id": user._id,
+                                        "name": user.name,
+                                        "profileImage": user.coverPhoto
+                                    }
+                                }, function(error,data){
+                                        result.json({
                                             "status": "success",
                                             "message": "Post has been uploaded."
                                     });
@@ -367,13 +472,9 @@ http.listen(process.env.PORT || 5000, function() {
                             }
                         });
                     }
-
-                    if(request.files.video.size > 0 && request.files.video.type.includes("video")){
-                        video = "public/videos/" + new Date().getTime() + "-" + request.files.video.name;
-                        fileSystem.rename(request.files.video.path, video, function(error){
-                            //
-                        });
-                    }
+                    
+                    else 
+                    {
                     database.collection("posts").insertOne({
                         "caption": caption,
                         "image": image,
@@ -406,23 +507,24 @@ http.listen(process.env.PORT || 5000, function() {
                                 }
                             }
                         }, function(error,data){
-                            response.json({
+                            result.json({
                                 "status": "success",
                                 "message": "Post has been uploaded."
                             });
                         });
                     });
                 }
+                }
             });
         });
 
-        app.post("/getNewsfeed", function(request,response){
+        app.post("/getNewsfeed", function(request,result){
             var accessToken = request.fields.accessToken;
             database.collection("users").findOne({
                 "accessToken": accessToken
             }, function(error,user){
                 if(user == null){
-                    response.json({
+                    result.json({
                         "status": "error",
                         "message": "User has been logged out. Please login again."
                     });
@@ -432,6 +534,16 @@ http.listen(process.env.PORT || 5000, function() {
 
                     for(var a=0; a<user.pages.length;a++){
                         ids.push(user.pages[a]._id);
+                    }
+
+                    for(var a=0; a<user.groups.length;a++){
+                        if(user.groups[a].status=="Accepted"){
+                            ids.push(user.groups[a]._id);
+                        }
+                    }
+
+                    for(var a=0; a<user.friends.length;a++){
+                        ids.push(user.friends[a]._id);
                     }
 
                     database.collection("posts")
@@ -445,7 +557,7 @@ http.listen(process.env.PORT || 5000, function() {
                     })
                     .limit(5)
                     .toArray(function(error,data){
-                        response.json({
+                        result.json({
                             "status": "success",
                             "message": "Record has been fetched",
                             "data": data
@@ -455,7 +567,7 @@ http.listen(process.env.PORT || 5000, function() {
             });
         });
 
-        app.post("/toggleLikePost", function(request,response){
+        app.post("/toggleLikePost", function(request,result){
 
             var accessToken = request.fields.accessToken;
             var _id = request.fields._id;
@@ -464,7 +576,7 @@ http.listen(process.env.PORT || 5000, function() {
                 "accessToken": accessToken
             }, function(error,user){
                 if(user == null){
-                    response.json({
+                    result.json({
                         "status": "error",
                         "message": "User has been logged out. Please login again."
                     });
@@ -474,7 +586,7 @@ http.listen(process.env.PORT || 5000, function() {
                         "_id": ObjectId(_id)
                     }, function(error,post){
                         if(post == null){
-                            response.json({
+                            result.json({
                                 "status": "error",
                                 "message": "Post does not exist."
                             });
@@ -515,7 +627,7 @@ http.listen(process.env.PORT || 5000, function() {
                                         }
                                     });
 
-                                    response.json({
+                                    result.json({
                                         "status": "unliked",
                                         "message": "Post has been unliked."
                                     });
@@ -552,7 +664,7 @@ http.listen(process.env.PORT || 5000, function() {
                                         $and: [{
                                             "_id": post.user._id
                                         }, {
-                                            "posts._id": post.id
+                                            "posts._id": post._id
                                         }]
                                     }, {
                                         $push: {
@@ -564,7 +676,7 @@ http.listen(process.env.PORT || 5000, function() {
                                         }
                                     });
 
-                                    response.json({
+                                    result.json({
                                         "status": "success",
                                         "message": "Post has been liked."
                                     });
@@ -878,12 +990,19 @@ http.listen(process.env.PORT || 5000, function() {
                         $options: "i"
                     }
                 }).toArray(function (error, pages) {
-    
-                    result.json({
-                        "status": "success",
-                        "message": "Record has been fetched",
-                        "data": data,
-                        "pages": pages
+                    database.collection("groups").find({
+                        "name": {
+                            $regex: ".*" + query + ".*",
+                            $options: "i"
+                        }
+                    }).toArray(function (error, groups) {
+                        result.json({
+                            "status": "success",
+                            "message": "Record has been fetched",
+                            "data": data,
+                            "pages": pages,
+                            "groups": groups
+                        });
                     });
                 });
 			});
@@ -918,15 +1037,21 @@ http.listen(process.env.PORT || 5000, function() {
 				} else {
 
                     if(request.files.coverPhoto.size > 0 && request.files.coverPhoto.type.includes("image")){
-                        coverPhoto = "public/images/" + new Date().getTime() + "-" + request.files.coverPhoto.name;
-                        fileSystem.rename(request.files.coverPhoto.path,coverPhoto,function(error){
-                            //
+                        // coverPhoto = "public/images/" + new Date().getTime() + "-" + request.files.coverPhoto.name;
+                        // fileSystem.rename(request.files.coverPhoto.path,coverPhoto,function(error){
+                        //     //
+                        // });
+                        coverPhoto = request.files.coverPhoto.path;
+                        var coverPhotoPath = null;
+                        cloudinary.uploader.upload(coverPhoto, function(error, response) {
+                            coverPhotoPath=response.url;
                         });
+
                         database.collection("pages").insertOne({
                             "name":name,
                             "domainName":domainName,
                             "additionalInfo":additionalInfo,
-                            "coverPhoto":coverPhoto,
+                            "coverPhoto":coverPhotoPath,
                             "likers":[],
                             "user":{
                                 "_id":user._id,
@@ -1217,9 +1342,116 @@ http.listen(process.env.PORT || 5000, function() {
 		});
 
 		app.post("/toggleJoinGroup", function (request, result) {
-			// Paid version only
-			// Please read README.txt to get full version.
-		});
+            
+            var accessToken = request.fields.accessToken;
+            var _id = request.fields._id;
+
+            database.collection("users").findOne({
+                "accessToken": accessToken
+            }, function(error,user){
+                if(user == null){
+                    result.json({
+                        "status": "error",
+                        "message": "User has been logged out. Please login again."
+                    });
+                } else {
+                    database.collection("groups").findOne({
+                        "_id": ObjectId(_id)
+                    }, function(error,group){
+                        if(group == null){
+                            result.json({
+                                "status": "error",
+                                "message": "Group does not exist."
+                            });
+                        } else {
+                            var isMember = false;
+                            for(var a = 0;a< group.members.length;a++){
+                                var member = group.members[a];
+
+                                if(member._id.toString()==user._id.toString()){
+                                    isMember = true;
+                                    break;
+                                }
+                            }
+
+                            if(isMember){
+                                database.collection("groups").updateOne({
+                                    "_id": ObjectId(_id)
+                                },{
+                                    $pull: {
+                                        "members": {
+                                            "_id": user._id,
+                                        }
+                                    }
+                                }, function(error,data){
+                                    database.collection("users").updateOne({
+                                        "accessToken": accessToken
+                                    }, {
+                                        $pull: {
+                                            "groups": {
+                                                "_id": ObjectId(_id)
+                                            }
+                                        }
+                                    },function(error,data){
+                                        result.json({
+                                            "status": "left",
+                                            "message": "Has left the group."
+                                        });
+                                    });
+                                });
+                            } else {
+                                database.collection("groups").updateOne({
+                                    "_id": ObjectId(_id)
+                                },{
+                                    $push: {
+                                        "members": {
+                                            "_id": user._id,
+                                            "name": user.name,
+                                            "profileImage": user.profileImage,
+                                            "status": "Pending"
+                                        }
+                                    }
+                                }, function(error,data){
+                                    database.collection("users").updateOne({
+                                        "accessToken": accessToken
+                                    }, {
+                                        $push: {
+                                            "groups": {
+                                                "_id": group._id,
+                                                "name": group.name,
+                                                "coverPhoto": group.coverPhoto,
+                                                "status": "Pending"
+                                            }
+                                        }
+                                    },function(error,data){
+                                    database.collection("users").updateOne({
+                                        "_id": group.user._id
+                                    }, {
+                                        $push: {
+                                            "notifications": {
+                                                "_id": ObjectId(),
+                                                "type": "group_join_request",
+                                                "content": user.name + " sent a request to join your group.",
+                                                "profileImage": user.profileImage,
+                                                "groupId": group._id,
+                                                "userId": user._id,
+                                                "status": "Pending",
+                                                "createdAt": new Date().getTime()
+                                            }
+                                        }
+                                    });
+                                        result.json({
+                                            "status": "success",
+                                            "message": "Request to join group has been sent."
+                                        });
+                                    });
+                                });
+                            }
+                        }
+                    });
+                }
+            });
+        });
 
 		app.post("/sendFriendRequest", function (request, result) {
             
@@ -1232,7 +1464,7 @@ http.listen(process.env.PORT || 5000, function() {
                 if(user == null){
                     result.json({
                         "status": "error",
-                        "message": "Friend Request Error"
+                        "message": "User has been logged out. Please login again."
                     });
                 } else {
                     var me = user;
@@ -1428,7 +1660,7 @@ http.listen(process.env.PORT || 5000, function() {
                     database.collection("pages").findOne({
                         "_id": ObjectId(_id)
                     }, function(error,page){
-                        if(paage == null){
+                        if(page == null){
                             result.json({
                                 "status": "error",
                                 "message": "Page does not exist."
@@ -1530,5 +1762,309 @@ http.listen(process.env.PORT || 5000, function() {
                 }
             });
         });
+
+        app.get("/createGroup",function(request,result){
+            result.render("createGroup");
+        });
+
+        app.post("/createGroup", function (request, result) {
+			var accessToken = request.fields.accessToken;
+            var name = request.fields.name;
+            var additionalInfo = request.fields.additionalInfo;
+            var coverPhoto = "";
+			database.collection("users").findOne({
+				"accessToken": accessToken
+			}, function (error, user) {
+				if (user == null) {
+					result.json({
+						"status": "error",
+						"message": "User has been logged out. Please login again."
+					});
+				} else {
+
+                    if(request.files.coverPhoto.size > 0 && request.files.coverPhoto.type.includes("image")){
+                        // coverPhoto = "public/images/" + new Date().getTime() + "-" + request.files.coverPhoto.name;
+                        // fileSystem.rename(request.files.coverPhoto.path,coverPhoto,function(error){
+                        //     //
+                        // });
+                        coverPhoto = request.files.coverPhoto.name;
+                        var coverPhotoPath=null;
+                        cloudinary.uploader.upload(coverPhoto, function(error, response) {
+                            coverPhotoPath=response.url;
+                        });
+                        database.collection("groups").insertOne({
+                            "name":name,
+                            "additionalInfo":additionalInfo,
+                            "coverPhoto":coverPhotoPath,
+                            "members":[{
+                                "_id": user._id,
+                                "name": user.name,
+                                "profileImage": user.profileImage,
+                                "status": "Accepted"
+                            }],
+                            "user":{
+                                "_id":user._id,
+                                "name":user.name,
+                                "profileImage":user.profileImage
+                            }
+                        }, function(error,data){
+                            database.collection("users").updateOne({
+                                "accessToken": accessToken
+                            }, {
+                                $push: {
+                                    "groups": {
+                                        "_id": data.insertedId,
+                                        "name": name,
+                                        "coverPhoto": coverPhotoPath,
+                                        "status": "Accepted"
+                                    }
+                                }
+                        }, function(error,data){
+                            result.json({
+                                "status": "success",
+                                "message": "Group has been created."
+                            });
+                        });
+                    });    
+                    } else {
+                        result.json({
+                            "status": "error",
+                            "message": "Please select a cover photo."
+                        });
+                    }
+                }
+            });
+        });
+
+        app.post("/getGroups", function (request, result) {
+            
+            var accessToken = request.fields.accessToken;
+
+            database.collection("users").findOne({
+                "accessToken": accessToken
+            }, function(error,user){
+                if(user == null){
+                    result.json({
+                        "status": "error",
+                        "message": "User has been logged out. Please login again."
+                    });
+                } else {
+                    database.collection("groups").find({
+                        $or: [{
+                            "user._id": user._id
+                        },{
+                            "members._id": user._id
+                        }]
+                    }).toArray(function(error,data){
+                        result.json({
+                            "status": "success",
+                            "message": "Record has been fetched.",
+                            "data": data
+                        });
+                    });
+                }
+            });
+        });
+
+        app.get("/group/:_id",function(request,result){
+            var _id = request.params._id;
+
+            database.collection("groups").findOne({
+                "_id": ObjectId(_id)
+            }, function(error,page){
+                if(group == null){
+                    result.json({
+                        "status": "error",
+                        "message": "Group does not exist."
+                    });
+                } else {
+                    result.render("singleGroup",{
+                        "_id": _id
+                    });
+                }
+            });
+        });
+
+        app.post("/getGroupDetail", function (request, result) {
+			var _id = request.fields._id;
+
+			database.collection("groups").findOne({
+                "_id": ObjectId(_id)
+            }, function(error,group){
+                if(group == null){
+                    result.json({
+                        "status": "error",
+                        "message": "Group does not exist."
+                    });
+                } else {
+                        database.collection("posts").find({
+                            $and: [{
+                                "user._id": group._id
+                            }, {
+                                "type": "group_post"
+                            }]
+                        }).toArray(function(error,posts){
+                            result.json({
+                                "status": "success",
+                                "message": "Record has been fetched.",
+                                "data": group,
+                                "posts": posts
+                        });
+                    });
+                }
+            });    
+        });
+
+        app.post("/acceptRequestJoinGroup", function (request, result) {
+            var accessToken = request.fields.accessToken;
+            var _id = request.fields._id;
+            var groupId = request.fields.groupId;
+            var userId = request.fields.userId;
+
+            database.collection("users").findOne({
+                "accessToken": accessToken
+            },function(error,user){
+                if(user == null){
+                    result.json({
+                        "status": "error",
+                        "message": "User has been logged out. Please login again."
+                    });
+                } else {
+                    database.collection("groups").findOne({
+                        "_id": ObjectId(groupId)
+                    }, function(error,group){
+                        if(group == null){
+                            result.json({
+                                "status": "error",
+                                "message": "Group does not exist."
+                            });
+                        } else {
+                            if(group.user._id.toString() != user._id.toString()){
+                                result.json({
+                                    "status": "error",
+                                    "message": "Sorry, you do not own this group."
+                                });
+                                return;
+                            }
+
+                            database.collection("groups").updateOne({
+                                $and: [{
+                                    "_id": group._id
+                                },{
+                                    "members._id": ObjectId(userId)
+                                }]
+                            },{
+                                $set: {
+                                    "members.$.status": "Accepted"
+                                }
+                            },function(error,data){
+                                database.collection("users").updateOne({
+                                    $and: [{
+                                        "accessToken": accessToken
+                                    },{
+                                        "notifications.groupId": group._id
+                                    }]
+                            }, {
+                                $set:{
+                                    "notifications.$.status": "Accepted"
+                                }
+                            }, function(error,data){
+
+                                database.collection("users").updateOne({
+                                    $and: [{
+                                        "_id": ObjectId(userId)
+                                    },{
+                                        "groups._id": group._id
+                                    }]
+                            },{
+                                $set: {
+                                    "groups.$.status": "Accepted"
+                                }
+                            },function(error,data){
+                                result.json({
+                                    "status": "success",
+                                    "message": "Group join request has been accepted."
+                                    });
+                                });
+                            });
+                        });
+                    }
+                });
+            }
+        });
+        });
+
+        app.post("/rejectRequestJoinGroup", function (request, result) {
+            var accessToken = request.fields.accessToken;
+            var _id = request.fields._id;
+            var groupId = request.fields.groupId;
+            var userId = request.fields.userId;
+
+            database.collection("users").findOne({
+                "accessToken": accessToken
+            },function(error,user){
+                if(user == null){
+                    result.json({
+                        "status": "error",
+                        "message": "User has been logged out. Please login again."
+                    });
+                } else {
+                    database.collection("groups").findOne({
+                        "_id": ObjectId(groupId)
+                    }, function(error,group){
+                        if(group == null){
+                            result.json({
+                                "status": "error",
+                                "message": "Group does not exist."
+                            });
+                        } else {
+                            if(group.user._id.toString() != user._id.toString()){
+                                result.json({
+                                    "status": "error",
+                                    "message": "Sorry, you do not own this group."
+                                });
+                                return;
+                            }
+
+                            database.collection("groups").updateOne({
+                                "_id": group._id     
+                            },{
+                                $pull: {
+                                    "members": {
+                                        "_id": ObjectId(userId)
+                                    }
+                                }
+                            },function(error,data){
+                                database.collection("users").updateOne({
+                                        "accessToken": accessToken
+                                },{
+                                    $pull:{
+                                        "notifications":{
+                                            "groupId": group._id
+                                        }
+                                    } 
+                            },function(error,data){
+                                database.collection("users").updateOne({
+                                        "_id": ObjectId(userId)
+                            },{
+                                $pull: {
+                                    "groups":{
+                                        "_id": group._id
+                                    } 
+                                }
+                            },function(error,data){
+                                result.json({
+                                    "status": "success",
+                                    "message": "Group join request has been rejected."
+                                    });
+                                });
+                            });
+                        });
+                    }
+                });
+            }
+        });
+        });
+
     });
 });
