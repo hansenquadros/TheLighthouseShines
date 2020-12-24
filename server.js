@@ -70,7 +70,7 @@ http.listen(process.env.PORT || 3000, function() {
                             "password": hash,
                             "gender": gender,
                             "profileImage": "https://res.cloudinary.com/thelighthouseshines/image/upload/v1608796666/profile-pic_g0novg.jpg",
-                            "CoverPhoto": "https://res.cloudinary.com/thelighthouseshines/image/upload/v1608796714/cover-pic_epskjb.png",
+                            "coverPhoto": "https://res.cloudinary.com/thelighthouseshines/image/upload/v1608796714/cover-pic_epskjb.png",
                             "dob": "",
                             "city": "",
                             "country": "",
