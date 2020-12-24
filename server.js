@@ -202,13 +202,13 @@ http.listen(process.env.PORT || 3000, function() {
                                 "accessToken": accessToken
                             },{
                                 $set: {
-                                    "coverPhoto": response.url
+                                    "coverPhoto": response.secure_url
                                 }
                             },function(error,data){
                                 result.json({
                                     "status": "status",
                                     "message": "Cover photo has been updated.",
-                                    data: response.url
+                                    data: response.ecure_url
                                 });
                             });
                         });
@@ -279,13 +279,13 @@ http.listen(process.env.PORT || 3000, function() {
                                 "accessToken": accessToken
                             },{
                                 $set: {
-                                    "profileImage": response.url
+                                    "profileImage": response.secure_url
                                 }
                             },function(error,data){
                                 result.json({
                                     "status": "status",
                                     "message": "Profile photo has been updated.",
-                                    data: response.url
+                                    data: response.secure_url
                                 });
                             });
                         });
@@ -1044,7 +1044,7 @@ http.listen(process.env.PORT || 3000, function() {
                         coverPhoto = request.files.coverPhoto.path;
                         var coverPhotoPath = null;
                         cloudinary.uploader.upload(coverPhoto, function(error, response) {
-                            coverPhotoPath=response.url;
+                            coverPhotoPath=response.secure_url
                         });
 
                         database.collection("pages").insertOne({
@@ -1790,7 +1790,7 @@ http.listen(process.env.PORT || 3000, function() {
                         coverPhoto = request.files.coverPhoto.name;
                         var coverPhotoPath=null;
                         cloudinary.uploader.upload(coverPhoto, function(error, response) {
-                            coverPhotoPath=response.url;
+                            coverPhotoPath=response.secure_url;
                         });
                         database.collection("groups").insertOne({
                             "name":name,
