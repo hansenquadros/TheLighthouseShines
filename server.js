@@ -208,7 +208,7 @@ http.listen(process.env.PORT || 3000, function() {
                                 result.json({
                                     "status": "status",
                                     "message": "Cover photo has been updated.",
-                                    data: response.ecure_url
+                                    data: response.secure_url
                                 });
                             });
                         });
