@@ -30,7 +30,7 @@ var socketIO = require("socket.io")(http);
 var socketID = "";
 var users = [];
 
-var mainURL = "http://localhost:3000";
+var mainURL = "https://thelighthouseshines.herokuapp.com";
 
 socketIO.on("connection", function (socket) {
     console.log("User Connected: ", socket.id);
@@ -360,17 +360,25 @@ http.listen(process.env.PORT || 3000, function() {
                     });
                 } else {
                     if(request.files.image.size > 0 && request.files.image.type.includes("image")){
-                        image = "public/images/" + new Date().getTime() + "-" + request.files.image.name;
-                        fileSystem.rename(request.files.image.path, image, function(error){
-                            //
-                        });
+                        // image = "public/images/" + new Date().getTime() + "-" + request.files.image.name;
+                        // fileSystem.rename(request.files.image.path, image, function(error){
+                        //     //
+                        // });
+                        image = request.files.image.path;
+                        cloudinary.uploader.upload(image, function(error, response) {
+                            image=response.secure_url
+                        })
                     }
 
                     if(request.files.video.size > 0 && request.files.video.type.includes("video")){
-                        video = "public/videos/" + new Date().getTime() + "-" + request.files.video.name;
-                        fileSystem.rename(request.files.video.path, video, function(error){
-                            //
-                        });
+                        // video = "public/videos/" + new Date().getTime() + "-" + request.files.video.name;
+                        // fileSystem.rename(request.files.video.path, video, function(error){
+                        //     //
+                        // });
+                        video = request.files.video.path;
+                        cloudinary.uploader.upload(video, function(error, response) {
+                            video=response.secure_url
+                        })
                     }
 
                     if(type == "page_post"){
