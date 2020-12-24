@@ -70,6 +70,7 @@
         var form = document.getElementById("form-cover-photo");
 
         var ajax = new XMLHttpRequest();
+        ajax.timeout = 5000;
         ajax.open("POST", "/uploadCoverPhoto", true);
 
         ajax.onreadystatechange = function(){
@@ -93,6 +94,7 @@
 
         var ajax = new XMLHttpRequest();
         ajax.open("POST", "/uploadProfileImage", true);
+        ajax.timeout = 5000;
 
         ajax.onreadystatechange = function(){
             if(this.readyState == 4 && this.status == 200){
