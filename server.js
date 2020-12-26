@@ -1031,7 +1031,6 @@ http.listen(process.env.PORT || 3000, function() {
             var name = request.fields.name;
             var domainName = request.fields.domainName;
             var additionalInfo = request.fields.additionalInfo;
-            var coverPhoto = "";
 			database.collection("users").findOne({
 				"accessToken": accessToken
 			}, function (error, user) {
@@ -1047,9 +1046,8 @@ http.listen(process.env.PORT || 3000, function() {
                         // fileSystem.rename(request.files.coverPhoto.path,coverPhoto,function(error){
                         //     //
                         // });
-                        coverPhoto = request.files.coverPhoto.path;
                         var coverPhotoPath = null;
-                        cloudinary.uploader.upload(coverPhoto, function(error, response) {
+                        cloudinary.uploader.upload(request.files.coverPhoto.path, function(error, response) {
                             coverPhotoPath=response.secure_url
                         });
 
@@ -1777,7 +1775,6 @@ http.listen(process.env.PORT || 3000, function() {
 			var accessToken = request.fields.accessToken;
             var name = request.fields.name;
             var additionalInfo = request.fields.additionalInfo;
-            var coverPhoto = "";
 			database.collection("users").findOne({
 				"accessToken": accessToken
 			}, function (error, user) {
@@ -1787,15 +1784,13 @@ http.listen(process.env.PORT || 3000, function() {
 						"message": "User has been logged out. Please login again."
 					});
 				} else {
-
                     if(request.files.coverPhoto.size > 0 && request.files.coverPhoto.type.includes("image")){
                         // coverPhoto = "public/images/" + new Date().getTime() + "-" + request.files.coverPhoto.name;
                         // fileSystem.rename(request.files.coverPhoto.path,coverPhoto,function(error){
                         //     //
                         // });
-                        coverPhoto = request.files.coverPhoto.path;
                         var coverPhotoPath=null;
-                        cloudinary.uploader.upload(coverPhoto, function(error, response) {
+                        cloudinary.uploader.upload(request.files.coverPhoto.path, function(error, response) {
                             if(response)
                                 coverPhotoPath=response.secure_url;
                             else
