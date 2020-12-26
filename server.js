@@ -422,9 +422,7 @@ http.listen(process.env.PORT || 3000, function() {
                                 });
                             }
                         });
-                    } else
-
-                    if(type == "group_post"){
+                    } else if(type == "group_post"){
                         database.collection("groups").findOne({
                             "_id": ObjectId(_id)
                         }, function (error, group) {
@@ -469,7 +467,7 @@ http.listen(process.env.PORT || 3000, function() {
                                     "uploader": {
                                         "_id": user._id,
                                         "name": user.name,
-                                        "profileImage": user.coverPhoto
+                                        "profileImage": user.profileImage
                                     }
                                 }, function(error,data){
                                         result.json({
@@ -1879,7 +1877,7 @@ http.listen(process.env.PORT || 3000, function() {
 
             database.collection("groups").findOne({
                 "_id": ObjectId(_id)
-            }, function(error,page){
+            }, function(error,group){
                 if(group == null){
                     result.json({
                         "status": "error",
