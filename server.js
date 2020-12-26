@@ -1796,7 +1796,8 @@ http.listen(process.env.PORT || 3000, function() {
                         coverPhoto = request.files.coverPhoto.name;
                         var coverPhotoPath=null;
                         cloudinary.uploader.upload(coverPhoto, function(error, response) {
-                            coverPhotoPath=response.secure_url;
+                            if(response)
+                                coverPhotoPath=response.secure_url;
                         });
                         database.collection("groups").insertOne({
                             "name":name,
