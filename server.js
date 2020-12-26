@@ -1793,11 +1793,13 @@ http.listen(process.env.PORT || 3000, function() {
                         // fileSystem.rename(request.files.coverPhoto.path,coverPhoto,function(error){
                         //     //
                         // });
-                        coverPhoto = request.files.coverPhoto.name;
+                        coverPhoto = request.files.coverPhoto.path;
                         var coverPhotoPath=null;
                         cloudinary.uploader.upload(coverPhoto, function(error, response) {
                             if(response)
                                 coverPhotoPath=response.secure_url;
+                            else
+                                coverPhotoPath="https://res.cloudinary.com/thelighthouseshines/image/upload/v1608796714/cover-pic_epskjb.png";
                         });
                         database.collection("groups").insertOne({
                             "name":name,
