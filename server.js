@@ -344,8 +344,8 @@ http.listen(process.env.PORT || 3000, function() {
 
             var accessToken = request.fields.accessToken;
             var caption = request.fields.caption;
-            let image = "";
-            let video = "";
+            var image = "";
+            var video = "";
             var type = request.fields.type;
             var createdAt = new Date().getTime();
             var _id = request.fields._id;
@@ -366,11 +366,9 @@ http.listen(process.env.PORT || 3000, function() {
                         // });
                         var images = request.files.image.path;
                         cloudinary.uploader.upload(images, function(error, response) {
-                            image=response.secure_url
-                            console.log(image);
+                            image = response.secure_url
                         });
                     }
-                    console.log(image);
                     if(request.files.video.size > 0 && request.files.video.type.includes("video")){
                         // video = "public/videos/" + new Date().getTime() + "-" + request.files.video.name;
                         // fileSystem.rename(request.files.video.path, video, function(error){
@@ -378,7 +376,7 @@ http.listen(process.env.PORT || 3000, function() {
                         // });
                         var videos = request.files.video.path;
                         cloudinary.uploader.upload(videos, function(error, response) {
-                            video=response.secure_url
+                            video = response.secure_url
                         });
                     }
 
@@ -400,7 +398,7 @@ http.listen(process.env.PORT || 3000, function() {
                                     });
                                     return;
                                 }
-
+                                console.log("Image: " + image)
                                 database.collection("posts").insertOne({
                                     "caption": caption,
                                     "image": image,
