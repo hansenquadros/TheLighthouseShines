@@ -367,9 +367,10 @@ http.listen(process.env.PORT || 3000, function() {
                         var images = request.files.image.path;
                         cloudinary.uploader.upload(images, function(error, response) {
                             image=response.secure_url
+                            console.log(image);
                         });
                     }
-
+                    console.log(image);
                     if(request.files.video.size > 0 && request.files.video.type.includes("video")){
                         // video = "public/videos/" + new Date().getTime() + "-" + request.files.video.name;
                         // fileSystem.rename(request.files.video.path, video, function(error){
