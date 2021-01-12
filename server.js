@@ -367,7 +367,6 @@ http.listen(process.env.PORT || 3000, function() {
                         // });
                         var images = request.files.image.path;
                         cloudinary.uploader.upload(images, function(error, response) {
-                            image = response.secure_url
                             if(type == "page_post"){
                                 database.collection("pages").findOne({
                                     "_id": ObjectId(_id)
@@ -388,7 +387,7 @@ http.listen(process.env.PORT || 3000, function() {
                                         }
                                         database.collection("posts").insertOne({
                                             "caption": caption,
-                                            "image": image,
+                                            "image": response.secure_url,
                                             "video": video,
                                             "type": type,
                                             "createdAt": createdAt,
@@ -438,7 +437,7 @@ http.listen(process.env.PORT || 3000, function() {
         
                                         database.collection("posts").insertOne({
                                             "caption": caption,
-                                            "image": image,
+                                            "image": response.secure_url,
                                             "video": video,
                                             "type": type,
                                             "createdAt": createdAt,
@@ -469,7 +468,7 @@ http.listen(process.env.PORT || 3000, function() {
                             {
                             database.collection("posts").insertOne({
                                 "caption": caption,
-                                "image": image,
+                                "image": response.secure_url,
                                 "video": video,
                                 "type": type,
                                 "createdAt": createdAt,
@@ -489,7 +488,7 @@ http.listen(process.env.PORT || 3000, function() {
                                         "posts": {
                                             "_id": data.insertedId,
                                             "caption": caption,
-                                            "image": image,
+                                            "image": response.secure_url,
                                             "video": video,
                                             "type": type,
                                             "createdAt": createdAt,
