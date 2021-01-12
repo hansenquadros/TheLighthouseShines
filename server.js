@@ -344,8 +344,8 @@ http.listen(process.env.PORT || 3000, function() {
 
             var accessToken = request.fields.accessToken;
             var caption = request.fields.caption;
-            var image = "";
-            var video = "";
+            let image = "";
+            let video = "";
             var type = request.fields.type;
             var createdAt = new Date().getTime();
             var _id = request.fields._id;
@@ -366,8 +366,8 @@ http.listen(process.env.PORT || 3000, function() {
                         // });
                         var images = request.files.image.path;
                         cloudinary.uploader.upload(images, function(error, response) {
-                            image=response.url
-                        })
+                            image=response.secure_url
+                        });
                     }
 
                     if(request.files.video.size > 0 && request.files.video.type.includes("video")){
@@ -377,8 +377,8 @@ http.listen(process.env.PORT || 3000, function() {
                         // });
                         var videos = request.files.video.path;
                         cloudinary.uploader.upload(videos, function(error, response) {
-                            video=response.url
-                        })
+                            video=response.secure_url
+                        });
                     }
 
                     if(type == "page_post"){
