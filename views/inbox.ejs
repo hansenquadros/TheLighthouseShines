@@ -1,5 +1,8 @@
 <%- include ("includes/header") %>
 
+<script src="public/js/socket.io.js">
+	var socket = io();
+</script>
 <section>
 	<div class="gap gray-bg">
 		<div class="container-fluid">
@@ -16,10 +19,7 @@
 								<div class="messages">
 									<h5 class="f-title">
 										<i class="ti-bell"></i>
-										All messages
-										<span class="more-options">
-											<i class="fa fa-ellipsis-h"></i>
-										</span>
+										All message
 									</h5>
 
 									<div class="message-box">
@@ -176,11 +176,11 @@ function doSendMessage(form){
 function connectSocket(){
 	var ajax = new XMLHttpRequest();
 	ajax.open("POST", "/connectSocket", true);
-
+	var socket = io();
 	ajax.onreadystatechange = function(){
 		if(this.readyState == 4 && this.status == 200){
 			var response = JSON.parse(this.responseText);
-			socketIO.on("messageReceived", function(messageObj){
+			socket.on("messageReceived", function(messageObj){
 				if(selectedFriend != null && messageObj.form == selectedFriend._id){
 					var html = "";
 
@@ -201,5 +201,4 @@ function connectSocket(){
 	ajax.send(formData);
 }
 </script>
-<script src="http://localhost:3000/socket.io/socket.io.js"></script>
 <%- include ("includes/footer") %>
