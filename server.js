@@ -366,7 +366,7 @@ http.listen(process.env.PORT || 3000, function() {
                         // });
                         image = request.files.image.path;
                         cloudinary.uploader.upload(image, function(error, response) {
-                            image=response.secure_url
+                            image=response.url
                         })
                     }
 
@@ -377,7 +377,7 @@ http.listen(process.env.PORT || 3000, function() {
                         // });
                         video = request.files.video.path;
                         cloudinary.uploader.upload(video, function(error, response) {
-                            video=response.secure_url
+                            video=response.url
                         })
                     }
 
