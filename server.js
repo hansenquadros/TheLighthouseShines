@@ -30,6 +30,9 @@ var socketIO = require("socket.io")(http);
 var socketID = "";
 var users = [];
 
+var image="";
+var video="";
+
 var mainURL = "https://thelighthouseshines.herokuapp.com";
 
 socketIO.on("connection", function (socket) {
@@ -344,8 +347,6 @@ http.listen(process.env.PORT || 3000, function() {
 
             var accessToken = request.fields.accessToken;
             var caption = request.fields.caption;
-            var image = "";
-            var video = "";
             var type = request.fields.type;
             var createdAt = new Date().getTime();
             var _id = request.fields._id;
@@ -367,19 +368,295 @@ http.listen(process.env.PORT || 3000, function() {
                         var images = request.files.image.path;
                         cloudinary.uploader.upload(images, function(error, response) {
                             image = response.secure_url
+                            if(type == "page_post"){
+                                database.collection("pages").findOne({
+                                    "_id": ObjectId(_id)
+                                }, function (error, page) {
+                                    if (page == null) {
+                                        result.json({
+                                            "status": "error",
+                                            "message": "Page does not exist."
+                                        });
+                                        return;
+                                    } else {
+                                        if(page.user._id.toString() != user._id.toString()){
+                                            result.json({
+                                                "status": "error",
+                                                "message": "Sorry, you do not own this page."
+                                            });
+                                            return;
+                                        }
+                                        database.collection("posts").insertOne({
+                                            "caption": caption,
+                                            "image": image,
+                                            "video": video,
+                                            "type": type,
+                                            "createdAt": createdAt,
+                                            "likers": [],
+                                            "comments": [],
+                                            "shares": [],
+                                            "user": {
+                                                "_id": page._id,
+                                                "name": page.name,
+                                                "profileImage": page.coverPhoto
+                                            }
+                                        }, function(error,data){
+                                            result.json({
+                                                    "status": "success",
+                                                    "message": "Post has been uploaded."
+                                            });
+                                        });
+                                    }
+                                });
+                            } else if(type == "group_post"){
+                                database.collection("groups").findOne({
+                                    "_id": ObjectId(_id)
+                                }, function (error, group) {
+                                    if (group == null) {
+                                        result.json({
+                                            "status": "error",
+                                            "message": "Group does not exist."
+                                        });
+                                        return;
+                                    } else {
+                                        var isMember = false;
+                                        for(var a=0;a<group.members.length;a++){
+                                            var member = group.members[a];
+        
+                                            if(member._id.toString()==user._id.toString()){
+                                                isMember=true;
+                                                break;
+                                            }
+                                        }
+                                        if(!isMember){
+                                            result.json({
+                                                "status": "error",
+                                                "message": "Sorry, you are not a member of this group."
+                                            });
+                                            return;
+                                        }
+        
+                                        database.collection("posts").insertOne({
+                                            "caption": caption,
+                                            "image": image,
+                                            "video": video,
+                                            "type": type,
+                                            "createdAt": createdAt,
+                                            "likers": [],
+                                            "comments": [],
+                                            "shares": [],
+                                            "user": {
+                                                "_id": group._id,
+                                                "name": group.name,
+                                                "profileImage": group.coverPhoto
+                                            },
+                                            "uploader": {
+                                                "_id": user._id,
+                                                "name": user.name,
+                                                "profileImage": user.profileImage
+                                            }
+                                        }, function(error,data){
+                                                result.json({
+                                                    "status": "success",
+                                                    "message": "Post has been uploaded."
+                                            });
+                                        });
+                                    }
+                                });
+                            }
+                            
+                            else 
+                            {
+                            database.collection("posts").insertOne({
+                                "caption": caption,
+                                "image": image,
+                                "video": video,
+                                "type": type,
+                                "createdAt": createdAt,
+                                "likers": [],
+                                "comments": [],
+                                "shares": [],
+                                "user": {
+                                    "_id": user._id,
+                                    "name": user.name,
+                                    "profileImage": user.profileImage
+                                }
+                            }, function(error,data){
+                                database.collection("users").updateOne({
+                                    "accessToken": accessToken
+                                }, {
+                                    $push: {
+                                        "posts": {
+                                            "_id": data.insertedId,
+                                            "caption": caption,
+                                            "image": image,
+                                            "video": video,
+                                            "type": type,
+                                            "createdAt": createdAt,
+                                            "likers": [],
+                                            "comments": [],
+                                            "shares": [],
+                                        }
+                                    }
+                                }, function(error,data){
+                                    result.json({
+                                        "status": "success",
+                                        "message": "Post has been uploaded."
+                                    });
+                                });
+                            });
+                        }
                         });
                     }
-                    if(request.files.video.size > 0 && request.files.video.type.includes("video")){
+                    else if(request.files.video.size > 0 && request.files.video.type.includes("video")){
                         // video = "public/videos/" + new Date().getTime() + "-" + request.files.video.name;
                         // fileSystem.rename(request.files.video.path, video, function(error){
                         //     //
                         // });
                         var videos = request.files.video.path;
-                        cloudinary.uploader.upload(videos, function(error, response) {
+                        cloudinary.uploader.upload(videos,{resource_type: "video"}, function(error, response) {
                             video = response.secure_url
+                            if(type == "page_post"){
+                                database.collection("pages").findOne({
+                                    "_id": ObjectId(_id)
+                                }, function (error, page) {
+                                    if (page == null) {
+                                        result.json({
+                                            "status": "error",
+                                            "message": "Page does not exist."
+                                        });
+                                        return;
+                                    } else {
+                                        if(page.user._id.toString() != user._id.toString()){
+                                            result.json({
+                                                "status": "error",
+                                                "message": "Sorry, you do not own this page."
+                                            });
+                                            return;
+                                        }
+                                        database.collection("posts").insertOne({
+                                            "caption": caption,
+                                            "image": image,
+                                            "video": video,
+                                            "type": type,
+                                            "createdAt": createdAt,
+                                            "likers": [],
+                                            "comments": [],
+                                            "shares": [],
+                                            "user": {
+                                                "_id": page._id,
+                                                "name": page.name,
+                                                "profileImage": page.coverPhoto
+                                            }
+                                        }, function(error,data){
+                                            result.json({
+                                                    "status": "success",
+                                                    "message": "Post has been uploaded."
+                                            });
+                                        });
+                                    }
+                                });
+                            } else if(type == "group_post"){
+                                database.collection("groups").findOne({
+                                    "_id": ObjectId(_id)
+                                }, function (error, group) {
+                                    if (group == null) {
+                                        result.json({
+                                            "status": "error",
+                                            "message": "Group does not exist."
+                                        });
+                                        return;
+                                    } else {
+                                        var isMember = false;
+                                        for(var a=0;a<group.members.length;a++){
+                                            var member = group.members[a];
+        
+                                            if(member._id.toString()==user._id.toString()){
+                                                isMember=true;
+                                                break;
+                                            }
+                                        }
+                                        if(!isMember){
+                                            result.json({
+                                                "status": "error",
+                                                "message": "Sorry, you are not a member of this group."
+                                            });
+                                            return;
+                                        }
+        
+                                        database.collection("posts").insertOne({
+                                            "caption": caption,
+                                            "image": image,
+                                            "video": video,
+                                            "type": type,
+                                            "createdAt": createdAt,
+                                            "likers": [],
+                                            "comments": [],
+                                            "shares": [],
+                                            "user": {
+                                                "_id": group._id,
+                                                "name": group.name,
+                                                "profileImage": group.coverPhoto
+                                            },
+                                            "uploader": {
+                                                "_id": user._id,
+                                                "name": user.name,
+                                                "profileImage": user.profileImage
+                                            }
+                                        }, function(error,data){
+                                                result.json({
+                                                    "status": "success",
+                                                    "message": "Post has been uploaded."
+                                            });
+                                        });
+                                    }
+                                });
+                            }
+                            
+                            else 
+                            {
+                            database.collection("posts").insertOne({
+                                "caption": caption,
+                                "image": image,
+                                "video": video,
+                                "type": type,
+                                "createdAt": createdAt,
+                                "likers": [],
+                                "comments": [],
+                                "shares": [],
+                                "user": {
+                                    "_id": user._id,
+                                    "name": user.name,
+                                    "profileImage": user.profileImage
+                                }
+                            }, function(error,data){
+                                database.collection("users").updateOne({
+                                    "accessToken": accessToken
+                                }, {
+                                    $push: {
+                                        "posts": {
+                                            "_id": data.insertedId,
+                                            "caption": caption,
+                                            "image": image,
+                                            "video": video,
+                                            "type": type,
+                                            "createdAt": createdAt,
+                                            "likers": [],
+                                            "comments": [],
+                                            "shares": [],
+                                        }
+                                    }
+                                }, function(error,data){
+                                    result.json({
+                                        "status": "success",
+                                        "message": "Post has been uploaded."
+                                    });
+                                });
+                            });
+                        }
                         });
                     }
-
+                    else{
                     if(type == "page_post"){
                         database.collection("pages").findOne({
                             "_id": ObjectId(_id)
@@ -398,7 +675,6 @@ http.listen(process.env.PORT || 3000, function() {
                                     });
                                     return;
                                 }
-                                console.log("Image: " + image)
                                 database.collection("posts").insertOne({
                                     "caption": caption,
                                     "image": image,
@@ -480,6 +756,7 @@ http.listen(process.env.PORT || 3000, function() {
                     
                     else 
                     {
+                    console.log("Image: " + image);
                     database.collection("posts").insertOne({
                         "caption": caption,
                         "image": image,
@@ -519,6 +796,7 @@ http.listen(process.env.PORT || 3000, function() {
                         });
                     });
                 }
+            }
                 }
             });
         });
@@ -1048,23 +1326,22 @@ http.listen(process.env.PORT || 3000, function() {
                         var coverPhotoPath = null;
                         cloudinary.uploader.upload(request.files.coverPhoto.path, function(error, response) {
                             coverPhotoPath=response.secure_url
-                        });
-
-                        database.collection("pages").insertOne({
-                            "name":name,
-                            "domainName":domainName,
-                            "additionalInfo":additionalInfo,
-                            "coverPhoto":coverPhotoPath,
-                            "likers":[],
-                            "user":{
-                                "_id":user._id,
-                                "name":user.name,
-                                "profileImage":user.profileImage
-                            }
-                        }, function(error,data){
-                            result.json({
-                                "status": "success",
-                                "message": "Page has been created."
+                            database.collection("pages").insertOne({
+                                "name":name,
+                                "domainName":domainName,
+                                "additionalInfo":additionalInfo,
+                                "coverPhoto":coverPhotoPath,
+                                "likers":[],
+                                "user":{
+                                    "_id":user._id,
+                                    "name":user.name,
+                                    "profileImage":user.profileImage
+                                }
+                            }, function(error,data){
+                                result.json({
+                                    "status": "success",
+                                    "message": "Page has been created."
+                                });
                             });
                         });
                     } else {
@@ -1474,7 +1751,6 @@ http.listen(process.env.PORT || 3000, function() {
                     database.collection("users").findOne({
                         "_id": ObjectId(_id)
                     } ,function(error,user){
-                        //console.log(user);
                         if(user == null){
                             result.json({
                                 "status": "error",
@@ -1790,45 +2066,42 @@ http.listen(process.env.PORT || 3000, function() {
                         // });
                         var coverPhotoPath=null;
                         cloudinary.uploader.upload(request.files.coverPhoto.path, function(error, response) {
-                            if(response)
                                 coverPhotoPath=response.secure_url;
-                            else
-                                coverPhotoPath="https://res.cloudinary.com/thelighthouseshines/image/upload/v1608796714/cover-pic_epskjb.png";
-                        });
-                        database.collection("groups").insertOne({
-                            "name":name,
-                            "additionalInfo":additionalInfo,
-                            "coverPhoto":coverPhotoPath,
-                            "members":[{
-                                "_id": user._id,
-                                "name": user.name,
-                                "profileImage": user.profileImage,
-                                "status": "Accepted"
-                            }],
-                            "user":{
-                                "_id":user._id,
-                                "name":user.name,
-                                "profileImage":user.profileImage
-                            }
-                        }, function(error,data){
-                            database.collection("users").updateOne({
-                                "accessToken": accessToken
-                            }, {
-                                $push: {
-                                    "groups": {
-                                        "_id": data.insertedId,
-                                        "name": name,
-                                        "coverPhoto": coverPhotoPath,
+                                database.collection("groups").insertOne({
+                                    "name":name,
+                                    "additionalInfo":additionalInfo,
+                                    "coverPhoto":coverPhotoPath,
+                                    "members":[{
+                                        "_id": user._id,
+                                        "name": user.name,
+                                        "profileImage": user.profileImage,
                                         "status": "Accepted"
+                                    }],
+                                    "user":{
+                                        "_id":user._id,
+                                        "name":user.name,
+                                        "profileImage":user.profileImage
                                     }
-                                }
-                        }, function(error,data){
-                            result.json({
-                                "status": "success",
-                                "message": "Group has been created."
-                            });
-                        });
-                    });    
+                                }, function(error,data){
+                                    database.collection("users").updateOne({
+                                        "accessToken": accessToken
+                                    }, {
+                                        $push: {
+                                            "groups": {
+                                                "_id": data.insertedId,
+                                                "name": name,
+                                                "coverPhoto": coverPhotoPath,
+                                                "status": "Accepted"
+                                            }
+                                        }
+                                }, function(error,data){
+                                    result.json({
+                                        "status": "success",
+                                        "message": "Group has been created."
+                                    });
+                                });
+                            });   
+                            }); 
                     } else {
                         result.json({
                             "status": "error",
