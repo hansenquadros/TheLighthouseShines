@@ -28,6 +28,7 @@ app.post('/',(req,res)=>{
     }
     var intentMap =new Map();
     intentMap.set('Default Welcome Intent',demo);
+    agent.handleRequest(intentMap);
 })
 var TeamInfo = new Schema({
     name:{
