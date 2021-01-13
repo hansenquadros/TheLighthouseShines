@@ -84,10 +84,14 @@ http.listen(process.env.PORT || 3000, function() {
             function defaultFallback(agent) {
                 agent.add('Sorry! I am unable to understand this at the moment. I am still learning humans. You can pick any of the service that might help me.');
             }
+            function speakMe(agent) {
+                agent.add('Lol');
+            }
             const agent = new WebhookClient({ request: req, response: res });
             let intentMap = new Map();
             intentMap.set("Default Welcome Intent", welcome);
             intentMap.set("Default Fallback Intent", defaultFallback);
+            intentMap.set("Speak Me", speakMe);
             agent.handleRequest(intentMap);
         });
 
