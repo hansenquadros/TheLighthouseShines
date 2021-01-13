@@ -25,8 +25,12 @@ app.post('/',(req,res)=>{
     {
         mongoClient.connect("mongodb+srv://hansenquadros:hansenquadros@projectdbcluster.ywsoa.mongodb.net/lighthouse_db?retryWrites=true&w=majority", function(error,client){
             var database = client.db("lighthouse_db");
-            console.log(database.collection.find());
-            agent.add(database.collection.find());
+            database.collection.find({}).toArray(function(err, result) {
+                if (err) throw err;
+                console.log(result);
+                agent.add(result);
+                db.close();
+              });
     });
        
         
