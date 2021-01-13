@@ -16,7 +16,7 @@ app.use(bodyParser.json());
 
  const { dfff } = require("dialogflow-fulfillment");
 // const { speakMe } = require("./intents/SpeakMe.json");
-http.post('/',(req,res)=>{
+app.post('/',(req,res)=>{
     const agent= new dfff.WebhookClient({
         request:req,
         response:res
