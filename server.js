@@ -25,6 +25,7 @@ app.post('/',(req,res)=>{
     {
         mongoClient.connect("mongodb+srv://hansenquadros:hansenquadros@projectdbcluster.ywsoa.mongodb.net/lighthouse_db?retryWrites=true&w=majority", function(error,client){
             var database = client.db("lighthouse_db");
+            console.log("Heml");
             agent.add(`hello`);
     });
        
