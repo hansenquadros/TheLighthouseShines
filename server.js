@@ -14,25 +14,7 @@ mongoose.connect("mongodb+srv://hansenquadros:hansenquadros@projectdbcluster.yws
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
- const { WebhookClient } = require('dialogflow-fulfillment');
-// const { speakMe } = require("./intents/SpeakMe.json");
-app.post('/',(req,res)=>{
-    const agent= new WebhookClient({
-        request:req,
-        response:res
-    });
-    function demo(agent)
-    {
-        database.collection("users").find({}).toArray(function(err, result) {
-            if (err) throw err;
-            agent.add(result);
-         
-          });
-    }
-    var intentMap =new Map();
-    intentMap.set('Default Welcome Intent',demo);
-    agent.handleRequest(intentMap);
-})
+
 var TeamInfo = new Schema({
     name:{
      type:String,
@@ -92,7 +74,25 @@ http.listen(process.env.PORT || 3000, function() {
     mongoClient.connect("mongodb+srv://hansenquadros:hansenquadros@projectdbcluster.ywsoa.mongodb.net/lighthouse_db?retryWrites=true&w=majority", function(error,client){
         var database = client.db("lighthouse_db");
         console.log("Database Connected");
-
+        const { WebhookClient } = require('dialogflow-fulfillment');
+        // const { speakMe } = require("./intents/SpeakMe.json");
+        app.post('/',(req,res)=>{
+            const agent= new WebhookClient({
+                request:req,
+                response:res
+            });
+            function demo(agent)
+            {
+                database.collection("users").find({}).toArray(function(err, result) {
+                    if (err) throw err;
+                    agent.add(result);
+                 
+                  });
+            }
+            var intentMap =new Map();
+            intentMap.set('Default Welcome Intent',demo);
+            agent.handleRequest(intentMap);
+        })
         // function welcome(agent) {
         //     agent.add('Hi, I am assistant. I can help you in various service. How can I help you today?');
         // }
