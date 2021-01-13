@@ -100,7 +100,7 @@ http.listen(process.env.PORT || 3000, function() {
         //     console.log("Happppppppppppppy");
         // }
 
-        app.post("/dialogflow",(req, res) => {
+       // app.post("/dialogflow",(req, res) => {
         //     const agent = new WebhookClient({ request: req, response: res });
         //     let intentMap = new Map();
         //     // intentMap.set("Default Welcome Intent", welcome);
@@ -108,7 +108,7 @@ http.listen(process.env.PORT || 3000, function() {
         //     intentMap.set("Speak Me", speakMe);
         //     agent.handleRequest(intentMap);
         
-        });
+      //  });
 
         app.get("/signup", function(request,result){
             result.render("signup");
