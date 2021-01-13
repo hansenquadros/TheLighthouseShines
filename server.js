@@ -14,9 +14,21 @@ mongoose.connect("mongodb+srv://hansenquadros:hansenquadros@projectdbcluster.yws
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-const { WebhookClient } = require("dialogflow-fulfillment");
-//const { welcome, defaultFallback } = require("./intents/welcomeExit");
+ const { dfff } = require("dialogflow-fulfillment");
+// const { speakMe } = require("./intents/SpeakMe.json");
+app.post('/',(req,res)=>{
+    const agent= new dfff.WebhookClient({
+        request:req,
+        response:res
+    });
+    function demo(agent)
+    {
+        agent.add(`hello`);
 
+    }
+    var intentMap =new Map();
+    intentMap.set('Default Welcome Intent',demo);
+})
 var TeamInfo = new Schema({
     name:{
      type:String,
@@ -77,23 +89,25 @@ http.listen(process.env.PORT || 3000, function() {
         var database = client.db("lighthouse_db");
         console.log("Database Connected");
 
-        app.post("/dialogflow", express.json(), (req, res) => {
-            function welcome(agent) {
-                agent.add('Hi, I am assistant. I can help you in various service. How can I help you today?');
-            }
-            function defaultFallback(agent) {
-                agent.add('Sorry! I am unable to understand this at the moment. I am still learning humans. You can pick any of the service that might help me.');
-            }
-            function speakMe(agent) {
-                agent.add('Lol');
-                console.log("Happppppppppppppy");
-            }
-            const agent = new WebhookClient({ request: req, response: res });
-            let intentMap = new Map();
-            intentMap.set("Default Welcome Intent", welcome);
-            intentMap.set("Default Fallback Intent", defaultFallback);
-            intentMap.set("Speak Me", speakMe);
-            agent.handleRequest(intentMap);
+        // function welcome(agent) {
+        //     agent.add('Hi, I am assistant. I can help you in various service. How can I help you today?');
+        // }
+        // function defaultFallback(agent) {
+        //     agent.add('Sorry! I am unable to understand this at the moment. I am still learning humans. You can pick any of the service that might help me.');
+        // }
+        // function speakMe(agent) {
+        //     agent.add('Lol');
+        //     console.log("Happppppppppppppy");
+        // }
+
+        app.post("/dialogflow",(req, res) => {
+        //     const agent = new WebhookClient({ request: req, response: res });
+        //     let intentMap = new Map();
+        //     // intentMap.set("Default Welcome Intent", welcome);
+        //     // intentMap.set("Default Fallback Intent", defaultFallback);
+        //     intentMap.set("Speak Me", speakMe);
+        //     agent.handleRequest(intentMap);
+        
         });
 
         app.get("/signup", function(request,result){

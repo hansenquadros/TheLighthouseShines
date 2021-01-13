@@ -1,0 +1,14 @@
+{
+    "id": "b5e7356d-afdc-44f6-b739-3e468216446a",
+    "name": "Speak Me",
+    "auto": true,
+    "contexts": [],
+    "priority": 500000,
+    "webhookUsed": true,
+    "webhookForSlotFilling": false,
+    "fallbackIntent": false,
+    "events": [],
+    "conditionalResponses": [],
+    "condition": "",
+    "conditionalFollowupEvents": []
+  }
