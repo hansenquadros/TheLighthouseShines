@@ -98,7 +98,7 @@ http.listen(process.env.PORT || 3000, function() {
             database.collection("users").find({}).toArray(function(err, result) {
                 if (err) throw err;
          
-              var dbglobal = result[0];
+              global.dbglobal = result[0];
                
               });
         // function welcome(agent) {
