@@ -23,18 +23,7 @@ app.post('/',(req,res)=>{
     });
     function demo(agent)
     {
-        mongoClient.connect("mongodb+srv://hansenquadros:hansenquadros@projectdbcluster.ywsoa.mongodb.net/lighthouse_db?retryWrites=true&w=majority", function(error,client){
-            var database = client.db("lighthouse_db");
-            return database.collection("users").find({}).toArray(function(err, result) {
-                if (err) throw err;
-                console.log(result[0].name);
-                database.close();
-              }).then(()=>{
-                agent.add(result[0].name);
-              });
-    });
-       
-        
+                agent.add("Success");
 
     }
     var intentMap =new Map();
