@@ -1,5 +1,32 @@
+'use strict';
+
 var express = require("express");
 var app = express();
+
+var bodyParser = require('body-parser');
+
+var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
+
+mongoose.Promise = global.Promise;
+mongoose.connect("mongodb+srv://hansenquadros:hansenquadros@projectdbcluster.ywsoa.mongodb.net/lighthouse_db?retryWrites=true&w=majority");
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
+var TeamInfo = new Schema({
+    name:{
+     type:String,
+     required:false
+    },
+    description:{
+     type:String,
+     required:false
+    }
+});
+
+var TeamInfo = mongoose.model('TeamInfo', TeamInfo);
+
 
 var formidable = require("express-formidable");
 app.use(formidable());
@@ -7,99 +34,6 @@ app.use(formidable());
 var mongodb = require("mongodb");
 var mongoClient = mongodb.MongoClient;
 var ObjectId = mongodb.ObjectId;
-
-var admin = require("firebase-admin");
-
-var serviceAccount = require('{"type": "service_account","project_id": "thelighthouseshines-b975b","private_key_id": "f4abf66e2b56587167118ddf19df3fe155dd4f8f","private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCU7WcmQnNN6V/7\nhaBqUYmbNZ9DNthGX7esbYXmeAm5+GZnFCHPTCSjev5cKhDHLUZbAYcq3ZBMWrDZ\nAxcysn5mc7yvLvVs04kbZ1fhpi613/qYeaIUgphZet70yeSL1XV0VUFpllMnvTkl\nSayudhQ3lwOyd2qLWI0Hc86kyPMbrLmk4a6I0hYYjRBUiiL6FjC8Ervp/51sQZ4i\nlw63sXJgDdlJE2jm656mRbGv42Sc3rMpdJjisBnWhU99SD7r/c0pIIvO6pUK9GGW\nWmfPMaFvuCplrRcP+Yzv7RW9u7FYzMO/tatXzYye/4sbVbMpcvMAa0avzVtBh+qi\nAnRJLtrFAgMBAAECggEAGiUxijB5ULDLdntHpdKpv1NjIegzgOtV8hIKQ2NIhdsb\nkzYgF2YNOpwhoqmJ54XFx71VbwuVxSnYyUh3HqHiefcQpYqvcIsUk3iJn6ZOpgRr\n2K/l6gbhWzgsgzocgwYXCDTddn17HMtmCGtOQxScyQOclQzM6ijCHZBRs3FJ6M4d\n+xdeIsRcEB3+8f/5JBsZAXcNl5FJdYNcjVe1OxS6ci00/qY1jmo7hWBrn87KbFZR\nmtZ7XbnaXjNf6TOclbJGf/qBzHBANbuK5R/oKZaI4V8V+WjGnR9nSgXQCzJ174eA\nc1Jm2k1zIGXNxS8YvObzLJETkKnRzKIvQhWZtOLNowKBgQDFk7YFNO9X/Dg7sYFT\n8VcDHsN7dy38MpmTs4i+O9klRYmuAoiFZ+hAGC+lkQrYEjtNynCt5CYpzBExAxtk\nv45Nb1mBNjAe7eKHKCy2lZUW+MAf63z8wZPb67qktCueH3oRohQuplGWmUu0Yo2h\nxIT50tKrdQPXRbLNBQ1A+TAe0wKBgQDA9vxDbgTKDGYeHkqWoMnVZBSnjaqdCRaR\nO3aFjiWK0RN06ndv+F7f9b14G12Zp7x2T6v925y507OV2Rgb0Oa2FqZZghwi9v51\nlrB+t5aAKjqHLcZp5ca6B4VsG9SDixU4BYPNKB2fI3a2sWAJ6w+XfPUFDrkhDJN9\ntLOzTqYRBwKBgQCrTnpYo2AOgpJjN3GxzaQrAWZuy5Pkgh7kkJq0joGlLljEtk+W\nk9QslovhWxPy6kPfG/J84z8vqE8TluUOgoQooa4SOWCZwJpTo8K5AJMHGuDCDFUP\ndev0l7v5iHn1HMejOEuVcwF0uS+JlJXGt/SwA1pD7S5KXZU86+9k8WoGnwKBgQCe\n91nemvYrFYfS7BV6fb+Iokg5uIWDlQcYYipD4FShRZiHytjWT4CpdCLAnZrAiOTD\neuMv4Qn+NJ9PpWctEy3deE9Wkc9oJp5+dMO1wLylnSRWVKmOeBL9ElEiPNMYAy5Z\n1oE8M/4jKe4Ul4+M3C8eF30qy3RL+7ZN6t3Xq8U3ZQKBgEjcBRXrkZCtlmz0LPCD\nTAB5UNzIom5VRr32fn0/MYWOUdMSQLqrENyif8KAkAr4j4RhRJtL2WYSjSGZymLU\nUWuQt3CIpAHdngQo7p6tnNHTgY6XK2juAZx0ewJ3ayLvdRUQmLRl8b5Ui7P39b9a\nE/IPwrVbxTDW5l9VtT57NbY1\n-----END PRIVATE KEY-----\n","client_email": "firebase-adminsdk-en9dp@thelighthouseshines-b975b.iam.gserviceaccount.com","client_id": "115417144437553088376","auth_uri": "https://accounts.google.com/o/oauth2/auth","token_uri": "https://oauth2.googleapis.com/token","auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs","client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-en9dp%40thelighthouseshines-b975b.iam.gserviceaccount.com"}');
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
-});
-
-const functions = require('firebase-functions');
-const {WebhookClient} = require('dialogflow-fulfillment');
-const {Card, Suggestion} = require('dialogflow-fulfillment');
-const mongoose = require('mongoose');
-
-mongoose.connect("mongodb+srv://hansenquadros:hansenquadros@projectdbcluster.ywsoa.mongodb.net/lighthouse_db?retryWrites=true&w=majority",{ useNewUrlParser: true });
-
-let mdb = mongoose.connection;
-
-mdb.on('error', console.error.bind(console, 'connection error:'));
-
-mdb.once('open', function callback() {
-
-    // Create song schema
-    let songSchema = mongoose.Schema({
-      decade: String,
-      artist: String,
-      song: String,
-      weeksAtOne: Number
-    });
-  
-    // Store song documents in a collection called "songs"
-    // this is important ie defining the model based on above schema
-    Song = mongoose.model('songs', songSchema);  
-  
-    // Create seed data
-    let seventies = new Song({
-      decade: '1970s',
-      artist: 'Debby Boone',
-      song: 'You Light Up My Life',
-      weeksAtOne: 10
-    });
-  
-  //use the code below to save the above document in the database!
-  /*   seventies.save(function (err) {
-  
-              console.log('saved');
-  
-       });
-  */
-  
-   });
-  
-  process.env.DEBUG = 'dialogflow:debug'; // enables lib debugging statements
-  
-  exports.dialogflowFirebaseFulfillment = functions.https.onRequest((request, response) => {
-    const agent = new WebhookClient({ request, response });
-    console.log('Dialogflow Request headers: ' + JSON.stringify(request.headers));
-    console.log('Dialogflow Request body: ' + JSON.stringify(request.body));
-  
-    function welcome(agent) {
-  
-  // I use the code below to find a song from databse and ask the user whether he wants to listen to it 
-  // Use the code below to extract data based on your criteria
-      return Song.find({ 'song': 'You Light Up My Life' }, 'song')
-        .then((songs) => {
-  
-              //songs is araay matching criteria, see log output
-              console.log(songs[0].song); 
-              agent.add(`Welcome to my agent! Would you like to listen ${songs[0].song}?`);
-  
-        })
-        .catch((err) => {
-  
-             agent.add(`Therz some problem`);
-  
-        });
-  
-    }
-  
-    function fallback(agent) {
-      agent.add(`I didn't understand`);
-      agent.add(`I'm sorry, can you try again?`);
-  }
-  
-  
-    // Run the proper function handler based on the matched Dialogflow intent name
-    let intentMap = new Map();
-    intentMap.set('Default Welcome Intent', welcome); 
-    intentMap.set('Default Fallback Intent', fallback);
-    // intentMap.set('your intent name here', yourFunctionHandler);
-    // intentMap.set('your intent name here', googleAssistantHandler);
-    agent.handleRequest(intentMap);
-  });
 
 var http = require("http").createServer(app);
 var bcrypt = require("bcrypt");
@@ -118,6 +52,7 @@ var accessTokenSecret = "myAccessTokenSecret";
 
 app.use("/public", express.static(__dirname + "/public"));
 app.set("view engine", "ejs");
+
 
 var socketIO = require("socket.io")(http);
 var socketID = "";
@@ -434,6 +369,39 @@ http.listen(process.env.PORT || 3000, function() {
 
         app.get("/",function(request,result){
             result.render("index");
+        });
+
+        app.post("/",function(req,res){
+            if (req.body.result.action == "schedule") {
+                    let teamToSearch = req.body.result && req.body.result.parameters && req.body.result.parameters.team ? req.body.result.parameters.team : 'Unknown';
+                    TeamInfo.findOne({name:teamToSearch},function(err,teamExists)
+                          {
+                            if (err)
+                            {
+                              return res.json({
+                                  speech: 'Something went wrong!',
+                                  displayText: 'Something went wrong!',
+                                  source: 'team info'
+                              });
+                            }
+                    if (teamExists)
+                            {
+                              return res.json({
+                                    speech: teamExists.description,
+                                    displayText: teamExists.description,
+                                    source: 'team info'
+                                });
+                            }
+                            else {
+                              return res.json({
+                                    speech: 'Currently I am not having information about this team',
+                                    displayText: 'Currently I am not having information about this team',
+                                    source: 'team info'
+                                });
+                            }
+                          });
+                    
+                  }
         });
 
         app.post("/addPost", function(request,result){
