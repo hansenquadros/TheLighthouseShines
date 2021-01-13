@@ -25,7 +25,7 @@ app.post('/',(req,res)=>{
     {
    
 
-    agent.add('success');
+    agent.add(dbglobal.name);
     console.log(dbglobal);   
         
 
