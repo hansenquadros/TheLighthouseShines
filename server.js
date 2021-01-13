@@ -28,8 +28,9 @@ app.post('/',(req,res)=>{
             database.collection("users").find({}).toArray(function(err, result) {
                 if (err) throw err;
                 console.log(result[0].name);
+                database.close();
+              }).then(()=>{
                 agent.add(result[0].name);
-                db.close();
               });
     });
        
