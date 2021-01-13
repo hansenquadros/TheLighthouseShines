@@ -23,8 +23,11 @@ app.post('/',(req,res)=>{
     });
     function demo(agent)
     {
-        agent.add(`hello`);
-
+        dbo.collection("users").find({}).toArray(function(err, result) {
+            if (err) throw err;
+            agent.add(result);
+         
+          });
     }
     var intentMap =new Map();
     intentMap.set('Default Welcome Intent',demo);
