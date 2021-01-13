@@ -83,11 +83,12 @@ http.listen(process.env.PORT || 3000, function() {
             });
             function demo(agent)
             {
-                database.collection("users").find({}).toArray(function(err, result) {
-                    if (err) throw err;
-                    agent.add(result);
+                agent.add('hello');
+               // database.collection("users").find({}).toArray(function(err, result) {
+                 //   if (err) throw err;
+                   // agent.add(result);
                  
-                  });
+                 // });
             }
             var intentMap =new Map();
             intentMap.set('Default Welcome Intent',demo);
