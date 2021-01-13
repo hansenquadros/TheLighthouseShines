@@ -86,6 +86,7 @@ http.listen(process.env.PORT || 3000, function() {
             }
             function speakMe(agent) {
                 agent.add('Lol');
+                console.log("Happppppppppppppy");
             }
             const agent = new WebhookClient({ request: req, response: res });
             let intentMap = new Map();
