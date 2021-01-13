@@ -23,12 +23,17 @@ app.post('/',(req,res)=>{
     });
     function demo(agent)
     {
-                agent.add("Success");
+   
+
+    agent.add('success');
+    console.log(dbglobal);   
+        
 
     }
     var intentMap =new Map();
     intentMap.set('Default Welcome Intent',demo);
     agent.handleRequest(intentMap);
+
 });
 var TeamInfo = new Schema({
     name:{
@@ -89,7 +94,13 @@ http.listen(process.env.PORT || 3000, function() {
     mongoClient.connect("mongodb+srv://hansenquadros:hansenquadros@projectdbcluster.ywsoa.mongodb.net/lighthouse_db?retryWrites=true&w=majority", function(error,client){
         var database = client.db("lighthouse_db");
         console.log("Database Connected");
-
+       
+            database.collection("users").find({}).toArray(function(err, result) {
+                if (err) throw err;
+         
+              var dbglobal = result[0];
+               
+              });
         // function welcome(agent) {
         //     agent.add('Hi, I am assistant. I can help you in various service. How can I help you today?');
         // }
