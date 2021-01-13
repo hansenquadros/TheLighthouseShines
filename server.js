@@ -14,10 +14,10 @@ mongoose.connect("mongodb+srv://hansenquadros:hansenquadros@projectdbcluster.yws
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
- const { dfff } = require("dialogflow-fulfillment");
+ const { WebhookClient } = require('dialogflow-fulfillment');
 // const { speakMe } = require("./intents/SpeakMe.json");
 app.post('/',(req,res)=>{
-    const agent= new dfff.WebhookClient({
+    const agent= new WebhookClient({
         request:req,
         response:res
     });
