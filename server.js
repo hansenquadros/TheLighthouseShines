@@ -25,7 +25,7 @@ app.post('/',(req,res)=>{
     {
         mongoClient.connect("mongodb+srv://hansenquadros:hansenquadros@projectdbcluster.ywsoa.mongodb.net/lighthouse_db?retryWrites=true&w=majority", function(error,client){
             var database = client.db("lighthouse_db");
-            database.collection("users").find({}).toArray(function(err, result) {
+            return database.collection("users").find({}).toArray(function(err, result) {
                 if (err) throw err;
                 console.log(result[0].name);
                 database.close();
