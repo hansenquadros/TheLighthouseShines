@@ -23,13 +23,9 @@ app.post('/',(req,res)=>{
     });
     function demo(agent)
     {
-        var name='bhavika';
-        agent.add('hello'+name);
-        database.collection("users").find({}).toArray(function(err, result) {
-            if (err) throw err;
-            agent.add(result);
-         
-          });
+        
+        agent.add(`hello`);
+
     }
     var intentMap =new Map();
     intentMap.set('Default Welcome Intent',demo);
