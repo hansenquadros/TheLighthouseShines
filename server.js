@@ -27,8 +27,8 @@ app.post('/',(req,res)=>{
             var database = client.db("lighthouse_db");
             database.collection("users").find({}).toArray(function(err, result) {
                 if (err) throw err;
-                console.log(result.name[0]);
-                agent.add(result.name[0]);
+                console.log(result[0].name);
+                agent.add(result[0].name);
                 db.close();
               });
     });
