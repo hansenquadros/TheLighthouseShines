@@ -21,12 +21,7 @@ app.post('/',(req,res)=>{
         request:req,
         response:res
     });
-    function demo(agent)
-    {
-        
-        agent.add(`hello`);
-
-    }
+    
     var intentMap =new Map();
     intentMap.set('Default Welcome Intent',demo);
     agent.handleRequest(intentMap);
@@ -90,7 +85,12 @@ http.listen(process.env.PORT || 3000, function() {
     mongoClient.connect("mongodb+srv://hansenquadros:hansenquadros@projectdbcluster.ywsoa.mongodb.net/lighthouse_db?retryWrites=true&w=majority", function(error,client){
         var database = client.db("lighthouse_db");
         console.log("Database Connected");
-
+        function demo(agent)
+        {
+            
+            agent.add(`hello`);
+    
+        }
         // function welcome(agent) {
         //     agent.add('Hi, I am assistant. I can help you in various service. How can I help you today?');
         // }
