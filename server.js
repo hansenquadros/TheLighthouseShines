@@ -8,6 +8,91 @@ var mongodb = require("mongodb");
 var mongoClient = mongodb.MongoClient;
 var ObjectId = mongodb.ObjectId;
 
+const functions = require('firebase-functions');
+const {WebhookClient} = require('dialogflow-fulfillment');
+const {Card, Suggestion} = require('dialogflow-fulfillment');
+const mongoose = require('mongoose');
+
+mongoose.connect("mongodb+srv://hansenquadros:hansenquadros@projectdbcluster.ywsoa.mongodb.net/lighthouse_db?retryWrites=true&w=majority",{ useNewUrlParser: true });
+
+let mdb = mongoose.connection;
+
+mdb.on('error', console.error.bind(console, 'connection error:'));
+
+mdb.once('open', function callback() {
+
+    // Create song schema
+    let songSchema = mongoose.Schema({
+      decade: String,
+      artist: String,
+      song: String,
+      weeksAtOne: Number
+    });
+  
+    // Store song documents in a collection called "songs"
+    // this is important ie defining the model based on above schema
+    Song = mongoose.model('songs', songSchema);  
+  
+    // Create seed data
+    let seventies = new Song({
+      decade: '1970s',
+      artist: 'Debby Boone',
+      song: 'You Light Up My Life',
+      weeksAtOne: 10
+    });
+  
+  //use the code below to save the above document in the database!
+  /*   seventies.save(function (err) {
+  
+              console.log('saved');
+  
+       });
+  */
+  
+   });
+  
+  process.env.DEBUG = 'dialogflow:debug'; // enables lib debugging statements
+  
+  exports.dialogflowFirebaseFulfillment = functions.https.onRequest((request, response) => {
+    const agent = new WebhookClient({ request, response });
+    console.log('Dialogflow Request headers: ' + JSON.stringify(request.headers));
+    console.log('Dialogflow Request body: ' + JSON.stringify(request.body));
+  
+    function welcome(agent) {
+  
+  // I use the code below to find a song from databse and ask the user whether he wants to listen to it 
+  // Use the code below to extract data based on your criteria
+      return Song.find({ 'song': 'You Light Up My Life' }, 'song')
+        .then((songs) => {
+  
+              //songs is araay matching criteria, see log output
+              console.log(songs[0].song); 
+              agent.add(`Welcome to my agent! Would you like to listen ${songs[0].song}?`);
+  
+        })
+        .catch((err) => {
+  
+             agent.add(`Therz some problem`);
+  
+        });
+  
+    }
+  
+    function fallback(agent) {
+      agent.add(`I didn't understand`);
+      agent.add(`I'm sorry, can you try again?`);
+  }
+  
+  
+    // Run the proper function handler based on the matched Dialogflow intent name
+    let intentMap = new Map();
+    intentMap.set('Default Welcome Intent', welcome); 
+    intentMap.set('Default Fallback Intent', fallback);
+    // intentMap.set('your intent name here', yourFunctionHandler);
+    // intentMap.set('your intent name here', googleAssistantHandler);
+    agent.handleRequest(intentMap);
+  });
+
 var http = require("http").createServer(app);
 var bcrypt = require("bcrypt");
 var fileSystem = require("fs");
@@ -1595,31 +1680,6 @@ http.listen(process.env.PORT || 3000, function() {
 			});
         });
         
-        app.get("/verifyEmail/:email/:verification_token", function (request, result) {
-			// Paid version only
-			// Please read README.txt to get full version.
-		});
-
-		app.get("/ResetPassword/:email/:reset_token", function (request, result) {
-			// Paid version only
-			// Please read README.txt to get full version.
-		});
-
-		app.get("/forgot-password", function (request, result) {
-			// Paid version only
-			// Please read README.txt to get full version.
-		});
-
-		app.post("/sendRecoveryLink", function (request, result) {
-			// Paid version only
-			// Please read README.txt to get full version.
-		});
-
-		app.post("/changePassword", function (request, result) {
-			// Paid version only
-			// Please read README.txt to get full version.
-		});
-
 		app.post("/toggleJoinGroup", function (request, result) {
             
             var accessToken = request.fields.accessToken;
