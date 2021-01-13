@@ -23,7 +23,7 @@ app.post('/',(req,res)=>{
     });
     function demo(agent)
     {
-        dbo.collection("users").find({}).toArray(function(err, result) {
+        database.collection("users").find({}).toArray(function(err, result) {
             if (err) throw err;
             agent.add(result);
          
