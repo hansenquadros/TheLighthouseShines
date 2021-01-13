@@ -15,7 +15,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 const { WebhookClient } = require("dialogflow-fulfillment");
-const { welcome, defaultFallback } = require("./intents/welcomeExit");
+//const { welcome, defaultFallback } = require("./intents/welcomeExit");
 
 var TeamInfo = new Schema({
     name:{
