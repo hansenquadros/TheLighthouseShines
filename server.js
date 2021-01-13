@@ -14,6 +14,9 @@ mongoose.connect("mongodb+srv://hansenquadros:hansenquadros@projectdbcluster.yws
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+const { WebhookClient } = require("dialogflow-fulfillment");
+const { welcome, defaultFallback } = require("./intents/welcomeExit");
+
 var TeamInfo = new Schema({
     name:{
      type:String,
@@ -73,6 +76,20 @@ http.listen(process.env.PORT || 3000, function() {
     mongoClient.connect("mongodb+srv://hansenquadros:hansenquadros@projectdbcluster.ywsoa.mongodb.net/lighthouse_db?retryWrites=true&w=majority", function(error,client){
         var database = client.db("lighthouse_db");
         console.log("Database Connected");
+
+        app.post("/dialogflow", express.json(), (req, res) => {
+            function welcome(agent) {
+                agent.add('Hi, I am assistant. I can help you in various service. How can I help you today?');
+            }
+            function defaultFallback(agent) {
+                agent.add('Sorry! I am unable to understand this at the moment. I am still learning humans. You can pick any of the service that might help me.');
+            }
+            const agent = new WebhookClient({ request: req, response: res });
+            let intentMap = new Map();
+            intentMap.set("Default Welcome Intent", welcome);
+            intentMap.set("Default Fallback Intent", defaultFallback);
+            agent.handleRequest(intentMap);
+        });
 
         app.get("/signup", function(request,result){
             result.render("signup");
@@ -369,39 +386,6 @@ http.listen(process.env.PORT || 3000, function() {
 
         app.get("/",function(request,result){
             result.render("index");
-        });
-
-        app.post("/",function(req,res){
-            if (req.body.result.action == "schedule") {
-                    let teamToSearch = req.body.result && req.body.result.parameters && req.body.result.parameters.team ? req.body.result.parameters.team : 'Unknown';
-                    TeamInfo.findOne({name:teamToSearch},function(err,teamExists)
-                          {
-                            if (err)
-                            {
-                              return res.json({
-                                  speech: 'Something went wrong!',
-                                  displayText: 'Something went wrong!',
-                                  source: 'team info'
-                              });
-                            }
-                    if (teamExists)
-                            {
-                              return res.json({
-                                    speech: teamExists.description,
-                                    displayText: teamExists.description,
-                                    source: 'team info'
-                                });
-                            }
-                            else {
-                              return res.json({
-                                    speech: 'Currently I am not having information about this team',
-                                    displayText: 'Currently I am not having information about this team',
-                                    source: 'team info'
-                                });
-                            }
-                          });
-                    
-                  }
         });
 
         app.post("/addPost", function(request,result){

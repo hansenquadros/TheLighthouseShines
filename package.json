@@ -24,6 +24,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^3.6.0",
     "mongoose": "^5.11.11",
-    "socket.io": "*"
+    "socket.io": "*",
+    "actions-on-google": "^2.12.0"
   }
 }
