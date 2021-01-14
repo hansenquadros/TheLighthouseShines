@@ -48,6 +48,7 @@ app.post('/',(req,res)=>{
         function demo6(agent)
         {
         agent.add(dbglobal.aboutme);
+        console.log(dbglobal.aboutme);
         }
         function demo7(agent)
         {
@@ -58,7 +59,6 @@ app.post('/',(req,res)=>{
             str= str+obj.name+",";
         }
         str=str+data[i].name;
-        console.log(str);
         agent.add(str);
         }
     var intentMap =new Map();
