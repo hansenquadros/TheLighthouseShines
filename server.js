@@ -21,17 +21,16 @@ app.post('/',(req,res)=>{
         request:req,
         response:res
     });
-    function demo(agent)
+    function demo2(agent)
     {
     agent.add(dbglobal.name);
     console.log(dbglobal);   
-        
-
+         
     }
     var intentMap =new Map();
-    intentMap.set('Default Welcome Intent',demo);
-    agent.handleRequest(intentMap);
-
+    intentMap.set('Name',demo);
+    intentMap.set('Email',demo2);
+ agent.handleRequest(intentMap);
 });
 var TeamInfo = new Schema({
     name:{
@@ -88,19 +87,17 @@ socketIO.on("connection", function (socket) {
 });
 http.listen(process.env.PORT || 3000, function() {
     console.log("Server Started");
-    
+
     mongoClient.connect("mongodb+srv://hansenquadros:hansenquadros@projectdbcluster.ywsoa.mongodb.net/lighthouse_db?retryWrites=true&w=majority", function(error,client){
         var database = client.db("lighthouse_db");
-        console.log("Database Connected");
-        database.collection("users").findOne({
-            "accessToken": accessToken
-        }).toArray(function(err, result) {
-            if (err) throw err;
-     
-          global.dbglobal = result[0];
-           
-          });
-            
+        console.log();
+       
+            database.collection("users").find({}).toArray(function(err, result) {
+                if (err) throw err;
+         
+              global.dbglobal = result[0];
+               
+              });
         // function welcome(agent) {
         //     agent.add('Hi, I am assistant. I can help you in various service. How can I help you today?');
         // }
@@ -125,7 +122,7 @@ http.listen(process.env.PORT || 3000, function() {
         app.get("/signup", function(request,result){
             result.render("signup");
         });
-
+        
         app.post("/signup", function(request,result){
             var name = request.fields.name;
             var username = request.fields.username;
@@ -193,7 +190,7 @@ http.listen(process.env.PORT || 3000, function() {
                 } else {
                     bcrypt.compare(password, user.password, function(error, isVerify){
                         if(isVerify){
-                            var accessToken = jwt.sign({ email:email }, accessTokenSecret);
+                             accessToken = jwt.sign({ email:email }, accessTokenSecret);
                             database.collection("users").findOneAndUpdate({
                                 "email": email
                             }, {
@@ -224,7 +221,7 @@ http.listen(process.env.PORT || 3000, function() {
         });
 
         app.post("/getUser",function(request,result){
-            var accessToken = request.fields.accessToken;
+             accessToken = request.fields.accessToken;
             database.collection("users").findOne({
                 "accessToken": accessToken
             }, function(error,user){
