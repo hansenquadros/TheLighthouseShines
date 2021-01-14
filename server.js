@@ -23,40 +23,15 @@ app.post('/',(req,res)=>{
     });
     function demo(agent)
     {
+   
+
     agent.add(dbglobal.name);
-    }
-    function demo1(agent)
-    {
-    agent.add(dbglobal.email);
-    }
-    function demo2(agent)
-    {
-    agent.add(dbglobal.gender);
-    }
-    function demo3(agent)
-    {
-    agent.add(dbglobal.dob);
-    }
-    function demo4(agent)
-    {
-    agent.add(dbglobal.city);
-    }
-    function demo5(agent)
-    {
-    agent.add(dbglobal.country);
-    }
-    function demo6(agent)
-    {
-    agent.add(dbglobal.aboutme);
+    //console.log(dbglobal);   
+        
+
     }
     var intentMap =new Map();
-    intentMap.set('Name',demo);
-    intentMap.set('Email',demo1);
-    intentMap.set('Gender',demo2);
-    intentMap.set('DOB',demo3);
-    intentMap.set('City',demo4);
-    intentMap.set('Country',demo5);
-    intentMap.set('AboutMe',demo6);
+    intentMap.set('Default Welcome Intent',demo);
     agent.handleRequest(intentMap);
 
 });
@@ -115,19 +90,17 @@ socketIO.on("connection", function (socket) {
 });
 http.listen(process.env.PORT || 3000, function() {
     console.log("Server Started");
-    global.accessToken=""
+    
     mongoClient.connect("mongodb+srv://hansenquadros:hansenquadros@projectdbcluster.ywsoa.mongodb.net/lighthouse_db?retryWrites=true&w=majority", function(error,client){
         var database = client.db("lighthouse_db");
         console.log("Database Connected");
        
-            database.collection("users").findOne({
-                "accessToken": 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImthbmNoYW4xMjN2YXNhbmRhbmlAZ21haWwuY29tIiwiaWF0IjoxNjEwNjQxMDAzfQ.MpNUwTyaC0dBXkV6DwbnkrEtQ8oLFchez9MjLBjkaUQ'
-            }, function(error,user){
-                if(user == null){
-                    global.dbglobal="";
-                }
-                global.dbglobal=user;
-                });
+            database.collection("users").find({}).toArray(function(err, result) {
+                if (err) throw err;
+         
+              global.dbglobal = result[0];
+               console.log(result[0]);
+              });
         // function welcome(agent) {
         //     agent.add('Hi, I am assistant. I can help you in various service. How can I help you today?');
         // }
