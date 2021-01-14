@@ -139,7 +139,7 @@ http.listen(process.env.PORT || 3001, function() {
             if(user == null){
                 global.dbglobal=""
             }
-            global.dbglobal=user;
+            //global.dbglobal=user;
           //  console.log(user);
             });
         //     agent.add('Hi, I am assistant. I can help you in various service. How can I help you today?');
@@ -231,6 +231,7 @@ http.listen(process.env.PORT || 3001, function() {
                         "message": "Email does not exist"
                     });
                 } else {
+                    global.dbglobal=user;
                     bcrypt.compare(password, user.password, function(error, isVerify){
                         if(isVerify){
                             var accessToken = jwt.sign({ email:email }, accessTokenSecret);
@@ -240,7 +241,9 @@ http.listen(process.env.PORT || 3001, function() {
                                 $set: {
                                     "accessToken": accessToken
                                 }
-                            }, function(error,data){
+                            }
+                            
+                            , function(error,data){
                                 result.json({
                                     "status": "success",
                                     "message": "Login successfully",
