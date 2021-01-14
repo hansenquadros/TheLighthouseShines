@@ -25,8 +25,38 @@ app.post('/',(req,res)=>{
     {
     agent.add(dbglobal.name);
     }
+    function demo1(agent)
+    {
+    agent.add(dbglobal.email);
+    }
+    function demo2(agent)
+    {
+    agent.add(dbglobal.gender);
+    }
+    function demo3(agent)
+    {
+    agent.add(dbglobal.dob);
+    }
+    function demo4(agent)
+    {
+    agent.add(dbglobal.city);
+    }
+    function demo5(agent)
+    {
+    agent.add(dbglobal.country);
+    }
+    function demo6(agent)
+    {
+    agent.add(dbglobal.aboutme);
+    }
     var intentMap =new Map();
     intentMap.set('Name',demo);
+    intentMap.set('Email',demo1);
+    intentMap.set('Gender',demo2);
+    intentMap.set('DOB',demo3);
+    intentMap.set('City',demo4);
+    intentMap.set('Country',demo5);
+    intentMap.set('AboutMe',demo6);
     agent.handleRequest(intentMap);
 
 });
