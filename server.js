@@ -23,8 +23,6 @@ app.post('/',(req,res)=>{
     });
     function demo(agent)
     {
-   
-
     agent.add(dbglobal.name);
     console.log(dbglobal);   
         
@@ -94,13 +92,15 @@ http.listen(process.env.PORT || 3000, function() {
     mongoClient.connect("mongodb+srv://hansenquadros:hansenquadros@projectdbcluster.ywsoa.mongodb.net/lighthouse_db?retryWrites=true&w=majority", function(error,client){
         var database = client.db("lighthouse_db");
         console.log("Database Connected");
-       
-            database.collection("users").find({}).toArray(function(err, result) {
-                if (err) throw err;
-         
-              global.dbglobal = result[0];
-               
-              });
+        database.collection("users").findOne({
+            "accessToken": accessToken
+        }).toArray(function(err, result) {
+            if (err) throw err;
+     
+          global.dbglobal = result[0];
+           
+          });
+            
         // function welcome(agent) {
         //     agent.add('Hi, I am assistant. I can help you in various service. How can I help you today?');
         // }
