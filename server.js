@@ -67,7 +67,7 @@ app.post('/',(req,res)=>{
     intentMap.set('DOB',demo3);
     intentMap.set('City',demo4);
     intentMap.set('Country',demo5);
-    intentMap.set('Aboutme',demo6);
+    intentMap.set('AboutMe',demo6);
     intentMap.set('Friends',demo7);
     agent.handleRequest(intentMap);
 
