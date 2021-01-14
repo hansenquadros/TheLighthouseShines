@@ -52,9 +52,9 @@ app.post('/',(req,res)=>{
         function demo7(agent)
         {
         var str=""
-        json=dbglobal.friends
-        for(var i = 0; i < json.length; i++) {
-            var obj = json[i];
+        var data=dbglobal.friends
+        for(var i = 0; i < data.length; i++) {
+            var obj = data[i];
             str= str+","+obj.name;
             
         }
@@ -140,7 +140,7 @@ http.listen(process.env.PORT || 3001, function() {
                 global.dbglobal=""
             }
             global.dbglobal=user;
-            console.log(user);
+          //  console.log(user);
             });
         //     agent.add('Hi, I am assistant. I can help you in various service. How can I help you today?');
         // }
