@@ -53,11 +53,12 @@ app.post('/',(req,res)=>{
         {
         var str=""
         var data=dbglobal.friends
-        for(var i = 0; i < data.length; i++) {
+        for(var i = 0; i < data.length-1; i++) {
             var obj = data[i];
-            str= str+","+obj.name;
+            str= str+obj.name+",";
             
         }
+        str=str+data[i];
         console.log(str);
         agent.add(str);
         }
