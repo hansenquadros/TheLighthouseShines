@@ -121,12 +121,13 @@ http.listen(process.env.PORT || 3000, function() {
         console.log("Database Connected");
        
             database.collection("users").findOne({
-                "accessToken": accessToken
+                "accessToken": 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImthbmNoYW4xMjN2YXNhbmRhbmlAZ21haWwuY29tIiwiaWF0IjoxNjEwNjIyODQzfQ.lpp-vIMAJj-vP235viFtPOQ2KUBFpfG1NagcJlSi1QU'
             }, function(error,user){
                 if(user == null){
                     global.dbglobal=""
                 }
                 global.dbglobal=user;
+                console.log(user);
                 });
         // function welcome(agent) {
         //     agent.add('Hi, I am assistant. I can help you in various service. How can I help you today?');
