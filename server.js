@@ -1,5 +1,4 @@
 'use strict';
-const storage = require('node-sessionstorage')
 
 var express = require("express");
 var app = express();
@@ -17,12 +16,7 @@ app.use(bodyParser.json());
 
  const { WebhookClient } = require('dialogflow-fulfillment');
 // const { speakMe } = require("./intents/SpeakMe.json");
-app.post("/",function(request,result){
-    global.accessToken = request.fields.accessToken;
-    storage.setItem('foo', accessToken);
-
-console.log('item set:', storage.getItem('foo'))
-
+app.post('/',(req,res)=>{
     const agent= new WebhookClient({
         request:req,
         response:res
@@ -120,20 +114,19 @@ socketIO.on("connection", function (socket) {
     socketID = socket.id;
 });
 http.listen(process.env.PORT || 3000, function() {
-    
-
+    console.log("Server Started");
+    global.accessToken=""
     mongoClient.connect("mongodb+srv://hansenquadros:hansenquadros@projectdbcluster.ywsoa.mongodb.net/lighthouse_db?retryWrites=true&w=majority", function(error,client){
         var database = client.db("lighthouse_db");
         console.log("Database Connected");
-            
+       
             database.collection("users").findOne({
-                "accessToken": 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImhhbnNlbnF1YWRyb3NAZ21haWwuY29tIiwiaWF0IjoxNjEwNDg0OTAzfQ.a8T4MlVSmrMSo3d_F8Ss5F0tRgzi7IrM_Akql-Az1DM'
+                "accessToken": 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImthbmNoYW4xMjN2YXNhbmRhbmlAZ21haWwuY29tIiwiaWF0IjoxNjEwNjQxMDAzfQ.MpNUwTyaC0dBXkV6DwbnkrEtQ8oLFchez9MjLBjkaUQ'
             }, function(error,user){
                 if(user == null){
-                    global.dbglobal=""
+                    global.dbglobal="";
                 }
                 global.dbglobal=user;
-                console.log(user);
                 });
         // function welcome(agent) {
         //     agent.add('Hi, I am assistant. I can help you in various service. How can I help you today?');
@@ -161,7 +154,6 @@ http.listen(process.env.PORT || 3000, function() {
         });
 
         app.post("/signup", function(request,result){
-   
             var name = request.fields.name;
             var username = request.fields.username;
             var email = request.fields.email;
@@ -259,9 +251,7 @@ http.listen(process.env.PORT || 3000, function() {
         });
 
         app.post("/getUser",function(request,result){
-         //   var accessToken = request.fields.accessToken;
-         //   storage.setItem('foo', accessToken);
-         //   console.log('item set:', storage.getItem('foo'))
+            var accessToken = request.fields.accessToken;
             database.collection("users").findOne({
                 "accessToken": accessToken
             }, function(error,user){
