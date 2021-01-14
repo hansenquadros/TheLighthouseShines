@@ -47,8 +47,7 @@ app.post('/',(req,res)=>{
         }
         function demo6(agent)
         {
-        agent.add(dbglobal.aboutme);
-        console.log(dbglobal.aboutme);
+        agent.add(dbglobal.aboutMe);
         }
         function demo7(agent)
         {
