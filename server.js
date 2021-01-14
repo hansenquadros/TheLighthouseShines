@@ -49,10 +49,7 @@ app.post('/',(req,res)=>{
         {
         agent.add(dbglobal.aboutme);
         }
-        function demo7(agent)
-        {
-        agent.add(dbglobal.friends);
-        }
+        
     var intentMap =new Map();
     intentMap.set('Name',demo);
     intentMap.set('Email',demo1);
@@ -61,7 +58,6 @@ app.post('/',(req,res)=>{
     intentMap.set('City',demo4);
     intentMap.set('Country',demo5);
     intentMap.set('AboutMe',demo6);
-    intentMap.set('Friends',demo7);
         agent.handleRequest(intentMap);
 
 });
