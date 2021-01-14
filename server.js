@@ -57,7 +57,7 @@ app.post('/',(req,res)=>{
             var obj = data[i];
             str= str+obj.name+",";
         }
-        str=str+data[i+1];
+        str=str+data[i];
         console.log(str);
         agent.add(str);
         }
