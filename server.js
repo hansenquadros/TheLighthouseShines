@@ -17,7 +17,12 @@ app.use(bodyParser.json());
 
  const { WebhookClient } = require('dialogflow-fulfillment');
 // const { speakMe } = require("./intents/SpeakMe.json");
-app.post('/',(req,res)=>{
+app.post("/",function(request,result){
+    global.accessToken = request.fields.accessToken;
+    storage.setItem('foo', accessToken);
+
+console.log('item set:', storage.getItem('foo'))
+
     const agent= new WebhookClient({
         request:req,
         response:res
@@ -120,9 +125,9 @@ http.listen(process.env.PORT || 3000, function() {
     mongoClient.connect("mongodb+srv://hansenquadros:hansenquadros@projectdbcluster.ywsoa.mongodb.net/lighthouse_db?retryWrites=true&w=majority", function(error,client){
         var database = client.db("lighthouse_db");
         console.log("Database Connected");
-       
+            
             database.collection("users").findOne({
-                "accessToken": 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImthbmNoYW4xMjN2YXNhbmRhbmlAZ21haWwuY29tIiwiaWF0IjoxNjEwNjIyODQzfQ.lpp-vIMAJj-vP235viFtPOQ2KUBFpfG1NagcJlSi1QU'
+                "accessToken": 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImhhbnNlbnF1YWRyb3NAZ21haWwuY29tIiwiaWF0IjoxNjEwNDg0OTAzfQ.a8T4MlVSmrMSo3d_F8Ss5F0tRgzi7IrM_Akql-Az1DM'
             }, function(error,user){
                 if(user == null){
                     global.dbglobal=""
@@ -254,7 +259,9 @@ http.listen(process.env.PORT || 3000, function() {
         });
 
         app.post("/getUser",function(request,result){
-            var accessToken = request.fields.accessToken;
+         //   var accessToken = request.fields.accessToken;
+         //   storage.setItem('foo', accessToken);
+         //   console.log('item set:', storage.getItem('foo'))
             database.collection("users").findOne({
                 "accessToken": accessToken
             }, function(error,user){
