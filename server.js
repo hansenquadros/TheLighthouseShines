@@ -23,15 +23,10 @@ app.post('/',(req,res)=>{
     });
     function demo(agent)
     {
-   
-
     agent.add(dbglobal.name);
-    console.log(dbglobal);   
-        
-
     }
     var intentMap =new Map();
-    intentMap.set('Default Welcome Intent',demo);
+    intentMap.set('Name',demo);
     agent.handleRequest(intentMap);
 
 });
