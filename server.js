@@ -7,6 +7,7 @@ var bodyParser = require('body-parser');
 
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+const storage = require('node-sessionstorage')
 
 mongoose.Promise = global.Promise;
 mongoose.connect("mongodb+srv://hansenquadros:hansenquadros@projectdbcluster.ywsoa.mongodb.net/lighthouse_db?retryWrites=true&w=majority");
@@ -109,6 +110,8 @@ var video="";
 
 var mainURL = "https://thelighthouseshines.herokuapp.com";
 
+
+
 socketIO.on("connection", function (socket) {
     console.log("User Connected: ", socket.id);
     socketID = socket.id;
@@ -119,7 +122,11 @@ http.listen(process.env.PORT || 3000, function() {
     mongoClient.connect("mongodb+srv://hansenquadros:hansenquadros@projectdbcluster.ywsoa.mongodb.net/lighthouse_db?retryWrites=true&w=majority", function(error,client){
         var database = client.db("lighthouse_db");
         console.log("Database Connected");
-       
+
+        storage.setItem('foo', 'bar')
+ 
+        console.log('item set:', storage.getItem('accessToken'))
+        
             database.collection("users").findOne({
                 "accessToken": 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImthbmNoYW4xMjN2YXNhbmRhbmlAZ21haWwuY29tIiwiaWF0IjoxNjEwNjIyODQzfQ.lpp-vIMAJj-vP235viFtPOQ2KUBFpfG1NagcJlSi1QU'
             }, function(error,user){
@@ -208,6 +215,7 @@ http.listen(process.env.PORT || 3000, function() {
         });
 
         app.post("/login", function(request,result){
+
             var email = request.fields.email;
             var password = request.fields.password;
             database.collection("users").findOne({
