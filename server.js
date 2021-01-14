@@ -49,7 +49,6 @@ app.post('/',(req,res)=>{
         {
         agent.add(dbglobal.aboutme);
         }
-        
     var intentMap =new Map();
     intentMap.set('Name',demo);
     intentMap.set('Email',demo1);
@@ -122,14 +121,14 @@ http.listen(process.env.PORT || 3001, function() {
         console.log("Database Connected");
        
         database.collection("users").findOne({
-            "accessToken": 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImthbmNoYW4xMjN2YXNhbmRhbmlAZ21haWwuY29tIiwiaWF0IjoxNjEwNjIyODQzfQ.lpp-vIMAJj-vP235viFtPOQ2KUBFpfG1NagcJlSi1QU'
+            "accessToken": 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImhhbnNlbnF1YWRyb3NAZ21haWwuY29tIiwiaWF0IjoxNjEwNDg0OTAzfQ.a8T4MlVSmrMSo3d_F8Ss5F0tRgzi7IrM_Akql-Az1DM'
         }, function(error,user){
             if(user == null){
                 global.dbglobal=""
             }
             global.dbglobal=user;
             console.log(user);
-            }); 
+            });
         //     agent.add('Hi, I am assistant. I can help you in various service. How can I help you today?');
         // }
         // function defaultFallback(agent) {
