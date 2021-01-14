@@ -49,6 +49,18 @@ app.post('/',(req,res)=>{
         {
         agent.add(dbglobal.aboutme);
         }
+        function demo7(agent)
+        {
+        var str=""
+        json=dbglobal.friends
+        for(var i = 0; i < json.length; i++) {
+            var obj = json[i];
+            str= str+","+obj.name;
+            
+        }
+        console.log(str);
+        agent.add(str);
+        }
     var intentMap =new Map();
     intentMap.set('Name',demo);
     intentMap.set('Email',demo1);
@@ -57,7 +69,8 @@ app.post('/',(req,res)=>{
     intentMap.set('City',demo4);
     intentMap.set('Country',demo5);
     intentMap.set('AboutMe',demo6);
-        agent.handleRequest(intentMap);
+    intentMap.set('Friends',demo7);
+    agent.handleRequest(intentMap);
 
 });
 var TeamInfo = new Schema({
