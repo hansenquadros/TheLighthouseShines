@@ -23,16 +23,40 @@ app.post('/',(req,res)=>{
     });
     function demo(agent)
     {
-   
-
-    agent.add(dbglobal.name);
-    //console.log(dbglobal);   
-        
-
-    }
+        agent.add(dbglobal.name);
+        }
+        function demo1(agent)
+        {
+        agent.add(dbglobal.email);
+        }
+        function demo2(agent)
+        {
+        agent.add(dbglobal.gender);
+        }
+        function demo3(agent)
+        {
+        agent.add(dbglobal.dob);
+        }
+        function demo4(agent)
+        {
+        agent.add(dbglobal.city);
+        }
+        function demo5(agent)
+        {
+        agent.add(dbglobal.country);
+        }
+        function demo6(agent)
+        {
+        agent.add(dbglobal.aboutme);
+        }
     var intentMap =new Map();
-    intentMap.set('Default Welcome Intent',demo);
-    agent.handleRequest(intentMap);
+    intentMap.set('Name',demo);
+    intentMap.set('Email',demo1);
+    intentMap.set('Gender',demo2);
+    intentMap.set('DOB',demo3);
+    intentMap.set('City',demo4);
+    intentMap.set('Country',demo5);
+    intentMap.set('AboutMe',demo6);    agent.handleRequest(intentMap);
 
 });
 var TeamInfo = new Schema({
@@ -88,7 +112,7 @@ socketIO.on("connection", function (socket) {
     console.log("User Connected: ", socket.id);
     socketID = socket.id;
 });
-http.listen(process.env.PORT || 3000, function() {
+http.listen(process.env.PORT || 3001, function() {
     console.log("Server Started");
     
     mongoClient.connect("mongodb+srv://hansenquadros:hansenquadros@projectdbcluster.ywsoa.mongodb.net/lighthouse_db?retryWrites=true&w=majority", function(error,client){
@@ -99,7 +123,7 @@ http.listen(process.env.PORT || 3000, function() {
                 if (err) throw err;
          
               global.dbglobal = result[0];
-               console.log(result[0]);
+               
               });
         // function welcome(agent) {
         //     agent.add('Hi, I am assistant. I can help you in various service. How can I help you today?');
