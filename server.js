@@ -115,17 +115,19 @@ socketIO.on("connection", function (socket) {
 });
 http.listen(process.env.PORT || 3000, function() {
     console.log("Server Started");
-    
+    global.accessToken=""
     mongoClient.connect("mongodb+srv://hansenquadros:hansenquadros@projectdbcluster.ywsoa.mongodb.net/lighthouse_db?retryWrites=true&w=majority", function(error,client){
         var database = client.db("lighthouse_db");
         console.log("Database Connected");
        
-            database.collection("users").find({}).toArray(function(err, result) {
-                if (err) throw err;
-         
-              global.dbglobal = result[0];
-               
-              });
+            database.collection("users").findOne({
+                "accessToken": accessToken
+            }, function(error,user){
+                if(user == null){
+                    global.dbglobal=""
+                }
+                global.dbglobal=user;
+                });
         // function welcome(agent) {
         //     agent.add('Hi, I am assistant. I can help you in various service. How can I help you today?');
         // }
