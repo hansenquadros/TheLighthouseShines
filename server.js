@@ -121,7 +121,7 @@ http.listen(process.env.PORT || 3000, function() {
         console.log("Database Connected");
        
             database.collection("users").findOne({
-                "accessToken": 'eyJhbGciOiJIUzI1NiIsInR5cCIkpXVCJ9.eyJlbWFpbCI6ImthbmNoYW4xMjN2YXNhbmRhbmlAZ21haWwuY29tIiwiaWF0IjoxNjEwNjIyODQzfQ.lpp-vIMAJj-vP235viFtPOQ2KUBFpfG1NagcJlSi1QU'
+                "accessToken": 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImthbmNoYW4xMjN2YXNhbmRhbmlAZ21haWwuY29tIiwiaWF0IjoxNjEwNjIyODQzfQ.lpp-vIMAJj-vP235viFtPOQ2KUBFpfG1NagcJlSi1QU'
             }, function(error,user){
                 if(user == null){
                     global.dbglobal=""
