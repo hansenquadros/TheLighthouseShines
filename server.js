@@ -49,6 +49,10 @@ app.post('/',(req,res)=>{
         {
         agent.add(dbglobal.aboutme);
         }
+        function demo7(agent)
+        {
+        agent.add(dbglobal.friends);
+        }
     var intentMap =new Map();
     intentMap.set('Name',demo);
     intentMap.set('Email',demo1);
@@ -56,7 +60,9 @@ app.post('/',(req,res)=>{
     intentMap.set('DOB',demo3);
     intentMap.set('City',demo4);
     intentMap.set('Country',demo5);
-    intentMap.set('AboutMe',demo6);    agent.handleRequest(intentMap);
+    intentMap.set('AboutMe',demo6);
+    intentMap.set('Friends',demo6);
+        agent.handleRequest(intentMap);
 
 });
 var TeamInfo = new Schema({
@@ -119,13 +125,15 @@ http.listen(process.env.PORT || 3001, function() {
         var database = client.db("lighthouse_db");
         console.log("Database Connected");
        
-            database.collection("users").find({}).toArray(function(err, result) {
-                if (err) throw err;
-         
-              global.dbglobal = result[0];
-               
-              });
-        // function welcome(agent) {
+        database.collection("users").findOne({
+            "accessToken": 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImthbmNoYW4xMjN2YXNhbmRhbmlAZ21haWwuY29tIiwiaWF0IjoxNjEwNjIyODQzfQ.lpp-vIMAJj-vP235viFtPOQ2KUBFpfG1NagcJlSi1QU'
+        }, function(error,user){
+            if(user == null){
+                global.dbglobal=""
+            }
+            global.dbglobal=user;
+            console.log(user);
+            }); 
         //     agent.add('Hi, I am assistant. I can help you in various service. How can I help you today?');
         // }
         // function defaultFallback(agent) {
