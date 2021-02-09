@@ -144,6 +144,81 @@
 		formData.append("accessToken", localStorage.getItem("accessToken"));
 		ajax.send(formData);
 	}
+
+	/*
+<?php
+session_start();
+
+echo `	<form method="post">
+    		<label>Username</label>
+    		<input type="text" name="username" pattern="[a-zA-Z0-9]+" required />
+    		<label>Password</label>
+    		<input type="password" name="password" required />
+  			<button type="submit" name="login" value="login">Log In</button>
+		</form>`;
+
+$conn = mysqli_connect("ccphplab", "ccphplab", "ccphplab", "users");
+
+if (isset($_POST['login'])) {
+        $username = $_POST['username'];
+        $password = $_POST['password'];
+        $sql = "SELECT username, password FROM users";
+		$result = $conn->query($sql);
+        if ($result->num_rows > 0) {
+  			while($row = $result->fetch_assoc()) {
+    			echo $row["username"]. " has logged in successfully.<br>";
+  			}
+		} else {
+  		echo "Invalid Credentials";
+	}
+	$conn->close();
+    }
+?>
+
+package com.amazonaws.samples;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.List;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.rds.AmazonRDS;
+import com.amazonaws.services.rds.AmazonRDSClientBuilder;
+import com.amazonaws.services.rds.model.DBInstance;
+import com.amazonaws.services.rds.model.DescribeDBInstancesResult;
+
+public class LabDemo {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		AmazonRDS aws = AmazonRDSClientBuilder.standard().withRegion(Regions.AP_SOUTH_1).build();
+		DescribeDBInstancesResult dbInstR = aws.describeDBInstances();
+		List<DBInstance> dbI = dbInstR.getDBInstances();
+		for(DBInstance dbIs:dbI) {
+			System.out.println("DB Detail: " + dbIs);
+		}
+		
+		try {
+			Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@demooracle.cmzjle7sap6g.ap-south-1.rds.amazonaws.com:1521:ORCL","user1234","user1234");
+			java.sql.Statement s=conn.createStatement();
+			java.sql.ResultSet rs=s.executeQuery("Select * from DUAL");
+			while(rs.next()) {
+				String id = rs.getString(1);
+				System.out.println(id);
+				
+			}
+			s.close();
+			conn.close();
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+
+}
+*/
 </script>
 
 <%- include ("includes/footer") %>
