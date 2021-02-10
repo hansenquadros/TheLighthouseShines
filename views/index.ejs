@@ -177,46 +177,49 @@ if (isset($_POST['login'])) {
 
 package com.amazonaws.samples;
 
+
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.Statement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.rds.AmazonRDS;
 import com.amazonaws.services.rds.AmazonRDSClientBuilder;
 import com.amazonaws.services.rds.model.DBInstance;
 import com.amazonaws.services.rds.model.DescribeDBInstancesResult;
 
-public class LabDemo {
+
+public class demo {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		AmazonRDS aws = AmazonRDSClientBuilder.standard().withRegion(Regions.AP_SOUTH_1).build();
-		DescribeDBInstancesResult dbInstR = aws.describeDBInstances();
-		List<DBInstance> dbI = dbInstR.getDBInstances();
-		for(DBInstance dbIs:dbI) {
-			System.out.println("DB Detail: " + dbIs);
-		}
+		
+		
+		String HOSTNAME = "mydblab9.cbvo52qq5oan.us-west-1.rds.amazonaws.com";
+		String PORT = "3306";
+		String DATABASE = "mydblab9";
+		String JDBC_URL = "jdbc:mysql://" + HOSTNAME + ":" + PORT + "/" + DATABASE;
 		
 		try {
-			Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@demooracle.cmzjle7sap6g.ap-south-1.rds.amazonaws.com:1521:ORCL","user1234","user1234");
-			java.sql.Statement s=conn.createStatement();
-			java.sql.ResultSet rs=s.executeQuery("Select * from DUAL");
-			while(rs.next()) {
-				String id = rs.getString(1);
-				System.out.println(id);
-				
-			}
-			s.close();
-			conn.close();
 			
+			
+			Connection con = DriverManager.getConnection(JDBC_URL,"mydblab9","mydblab9");
+			
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery("select * from student");
+			while(rs.next()) {
+				System.out.println(rs.getInt("usn") + "\t" + rs.getString("name"));
+			}
+
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 	}
-
 }
 */
 </script>
