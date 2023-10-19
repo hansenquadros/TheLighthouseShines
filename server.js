@@ -9,7 +9,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 mongoose.Promise = global.Promise;
-mongoose.connect("mongodb+srv://hansenquadros:hansenquadros@projectdbcluster.ywsoa.mongodb.net/lighthouse_db?retryWrites=true&w=majority");
+mongoose.connect("mongodb+srv://username:password@projectdbcluster.ywsoa.mongodb.net/lighthouse_db?retryWrites=true&w=majority");
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -100,13 +100,13 @@ var fileSystem = require("fs");
 var cloudinary = require('cloudinary').v2;
 cloudinary.config({ 
     cloud_name: 'thelighthouseshines', 
-    api_key: '487153282333662', 
-    api_secret: 'qdN3ZcG20XegDtAhr1uf_lhfI-I' 
+    api_key: 'api_key', 
+    api_secret: 'api_secret-I' 
   });
 var CLOUDINARY_URL="cloudinary://487153282333662:qdN3ZcG20XegDtAhr1uf_lhfI-I@thelighthouseshines";
 
 var jwt = require("jsonwebtoken");
-var accessTokenSecret = "myAccessTokenSecret";
+var accessTokenSecret = "accessTokenSecret";
 
 app.use("/public", express.static(__dirname + "/public"));
 app.set("view engine", "ejs");
@@ -128,12 +128,12 @@ socketIO.on("connection", function (socket) {
 http.listen(process.env.PORT || 3001, function() {
     console.log("Server Started");
     
-    mongoClient.connect("mongodb+srv://hansenquadros:hansenquadros@projectdbcluster.ywsoa.mongodb.net/lighthouse_db?retryWrites=true&w=majority", function(error,client){
+    mongoClient.connect("mongodb+srv://username:password@projectdbcluster.ywsoa.mongodb.net/lighthouse_db?retryWrites=true&w=majority", function(error,client){
         var database = client.db("lighthouse_db");
         console.log("Database Connected");
        
         database.collection("users").findOne({
-            "accessToken": 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImhhbnNlbnF1YWRyb3NAZ21haWwuY29tIiwiaWF0IjoxNjEwNDg0OTAzfQ.a8T4MlVSmrMSo3d_F8Ss5F0tRgzi7IrM_Akql-Az1DM'
+            "accessToken": 'accessToken'
         }, function(error,user){
             if(user == null){
                 global.dbglobal=""
